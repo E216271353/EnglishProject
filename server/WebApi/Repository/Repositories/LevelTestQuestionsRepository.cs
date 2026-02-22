@@ -20,9 +20,9 @@ namespace Repository.Repositories
         public LevelTestQuestions AddItem(LevelTestQuestions item)
         {
             _context.LevelTestQuestions.Add(item); // Use Add instead of ToList().Add
-            _context.save(); // Save changes to the database
+            _context.SaveChanges(); // Save changes to the database
             return item;
-        }
+        }  
 
         public void DeleteItem(int id)
         {
@@ -30,7 +30,7 @@ namespace Repository.Repositories
             if (existingItem != null)
             {
                 _context.LevelTestQuestions.Remove(existingItem); // Use Remove to delete the item
-                _context.save(); // Save changes to the database
+                _context.SaveChanges(); // Save changes to the database
             }
             else
             {
@@ -61,7 +61,7 @@ namespace Repository.Repositories
                 existingItem.CorrectAnswer = item.CorrectAnswer;
                 existingItem.LevelWeight = item.LevelWeight;
 
-                _context.save(); // Save changes to the database
+                _context.SaveChanges(); // Save changes to the database
             }
             else
             {

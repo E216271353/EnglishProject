@@ -20,14 +20,14 @@ namespace Repository.Repositories
             {
                 _context.VocabularyQuestions.ToList().Add(item);
 
-                _context.save();
+                _context.SaveChanges();
                 return item;
             }
 
             public void DeleteItem(int id)
             {
                 _context.VocabularyQuestions.ToList().Remove(GetById(id));
-                _context.save();
+                _context.SaveChanges();
             }
 
             public List<VocabularyQuestions> GetAll()
@@ -47,7 +47,7 @@ namespace Repository.Repositories
                 VocabularyQuestions.Word = item.Word;
                 VocabularyQuestions.CorrectMatch = item.CorrectMatch;
                 VocabularyQuestions.Level = item.Level;
-                _context.save();
+                _context.SaveChanges();
             }
    }
 }

@@ -20,7 +20,7 @@ namespace Repository.Repositories
         public LevelTestResults AddItem(LevelTestResults item)
         {
             _context.LevelTestResults.Add(item); // Use Add to insert the item
-            _context.save(); // Save changes to the database
+            _context.SaveChanges(); // Save changes to the database
             return item;
         }
 
@@ -30,7 +30,7 @@ namespace Repository.Repositories
             if (existingItem != null)
             {
                 _context.LevelTestResults.Remove(existingItem); // Use Remove to delete the item
-                _context.save(); // Save changes to the database
+                _context.SaveChanges(); // Save changes to the database
             }
             else
             {
@@ -58,7 +58,7 @@ namespace Repository.Repositories
                 existingItem.CalculatedLevel = item.CalculatedLevel;
                 existingItem.DateTaken = item.DateTaken;
 
-                _context.save(); // Save changes to the database
+                _context.SaveChanges(); // Save changes to the database
             }
             else
             {

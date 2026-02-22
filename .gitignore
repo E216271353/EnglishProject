@@ -1,0 +1,16 @@
+# Visual Studio files (the cause of your error)
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+
+# Node.js (React)
+node_modules/
+.env
+dist/
+build/
+
+# General
+.DS_Store
+thumbs.db

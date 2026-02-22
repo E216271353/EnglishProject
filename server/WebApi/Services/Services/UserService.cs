@@ -10,24 +10,26 @@ using System.Threading.Tasks;
 
 namespace Services.Services
 {
-    public class UserService:IUserService
+    public class UserService : IUserService
     {
         private readonly IRepository<User> _repository;
         public UserService(IRepository<User> _repository)
         {
             this._repository = _repository;
         }
-        public User Authenticate(UserLogin user)
+        public async Task<User> Login(UserLogin user)
         {
-            return _repository.GetAll().FirstOrDefault(x => x.Id == user.Id && x.Password == user.Password);
+            var users = await _repository.GetAll();
+            return users.FirstOrDefault(x => x.Id == user.Id && x.Password == user.Password);
         }
 
-        public async Task<User> SignUp(User userSignUp)// This method is unasynchronous and returns a Task<User>
+        public async Task<User> SignUp(User userSignUp)
         {
-            var existingUser = _repository.GetAll().FirstOrDefault(x => x.Id == userSignUp.Id || x.Password == userSignUp.Password);
+            var users = await _repository.GetAll();
+            var existingUser = users.FirstOrDefault(x => x.Id == userSignUp.Id || x.Password == userSignUp.Password);
             if (existingUser != null)
             {
-                throw new InvalidOperationException("User with this username or email already exists.");
+                throw new InvalidOperationException("User with this ID or password already exists.");
             }
 
             var newUser = new User
@@ -40,7 +42,7 @@ namespace Services.Services
                 CreatedAt = DateTime.UtcNow
             };
 
-            _repository.AddItem(newUser);
+            await _repository.AddItem(newUser);
             return newUser;
         }
     }

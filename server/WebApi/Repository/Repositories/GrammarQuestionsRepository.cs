@@ -20,7 +20,7 @@ namespace Repository.Repositories
         public GrammarQuestions AddItem(GrammarQuestions item)
         {
             _context.GrammarQuestions.Add(item); // Use Add to insert the item
-            _context.save(); // Save changes to the database
+            _context.SaveChanges(); // Save changes to the database
             return item;
         }
 
@@ -30,7 +30,7 @@ namespace Repository.Repositories
             if (existingItem != null)
             {
                 _context.GrammarQuestions.Remove(existingItem); // Use Remove to delete the item
-                _context.save(); // Save changes to the database
+                _context.SaveChanges(); // Save changes to the database
             }
             else
             {
@@ -59,7 +59,7 @@ namespace Repository.Repositories
                 existingItem.Hint = item.Hint;
                 existingItem.Explanation = item.Explanation;
 
-                _context.save(); // Save changes to the database
+                _context.SaveChanges(); // Save changes to the database
             }
             else
             {

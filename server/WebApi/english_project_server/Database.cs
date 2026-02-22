@@ -20,9 +20,9 @@ namespace english_project_server
         public DbSet<ReadingQuestions> ReadingQuestions { get; set; }
         public DbSet<ReadingTexts> ReadingTexts { get; set; }
 
-        public void save()
+        public Task SaveChanges()
         {
-           SaveChanges();
+            return SaveChanges();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

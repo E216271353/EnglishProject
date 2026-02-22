@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "q/V5v6qxmxs=",
+  "dgSpecHash": "FCAYyaq1qyg=",
   "success": true,
-  "projectFilePath": "C:\\Users\\USER\\Desktop\\project\\WebApi\\Repository\\Repository.csproj",
+  "projectFilePath": "C:\\Users\\USER\\Desktop\\תכנות יד\\ריאקט\\project\\server\\WebApi\\Repository\\Repository.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\USER\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

@@ -20,7 +20,7 @@ namespace Repository.Repositories
         public PracticeResults AddItem(PracticeResults item)
         {
             _context.PracticeResults.Add(item); // Use Add to insert the item
-            _context.save(); // Save changes to the database
+            _context.SaveChanges(); // Save changes to the database
             return item;
         }
 
@@ -30,7 +30,7 @@ namespace Repository.Repositories
             if (existingItem != null)
             {
                 _context.PracticeResults.Remove(existingItem); // Use Remove to delete the item
-                _context.save(); // Save changes to the database
+                _context.SaveChanges(); // Save changes to the database
             }
             else
             {
@@ -59,7 +59,7 @@ namespace Repository.Repositories
                 existingItem.NumIncorrect = item.NumIncorrect; // This should be a count, consider changing its type if needed
                 existingItem.DateAnswered = item.DateAnswered;
 
-                _context.save(); // Save changes to the database
+                _context.SaveChanges(); // Save changes to the database
             }
             else
             {
