@@ -15,7 +15,7 @@ namespace Repository.Entities
         public string OptionB { get; set; } // תשובה ב
         public string OptionC { get; set; } // תשובה ג
         public string OptionD { get; set; } // תשובה ד
-        public char CorrectAnswer { get; set; } // A/B/C/D
-        public int LevelWeight { get; set; } // משקל לניקוד
+        public char CorrectAnswer { get; set; } 
+        public int LevelWeight { get; set; } 
     }
 }
