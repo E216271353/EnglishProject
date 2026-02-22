@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "L:\\\u05E9\u05E0\u05D4 \u05D1\\Ai\\c#\u002B\u002B\\\u05EA\u05DC\u05DE\u05D9\u05D3\u05D5\u05EA\\\u05D0\u05DC\u05D9\u05E9\u05D1\u05E2 \u05D2\u05E0\u05E5\\project\\english_project_server\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{619FE626-78B3-41F0-AA66-09A82F0A99BA}|english_project_server\\english_project_server.csproj|l:\\\u05E9\u05E0\u05D4 \u05D1\\ai\\c#\u002B\u002B\\\u05EA\u05DC\u05DE\u05D9\u05D3\u05D5\u05EA\\\u05D0\u05DC\u05D9\u05E9\u05D1\u05E2 \u05D2\u05E0\u05E5\\project\\english_project_server\\english_project_server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{619FE626-78B3-41F0-AA66-09A82F0A99BA}|english_project_server\\english_project_server.csproj|solutionrelative:english_project_server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "L:\\\u05E9\u05E0\u05D4 \u05D1\\Ai\\c#\u002B\u002B\\\u05EA\u05DC\u05DE\u05D9\u05D3\u05D5\u05EA\\\u05D0\u05DC\u05D9\u05E9\u05D1\u05E2 \u05D2\u05E0\u05E5\\project\\english_project_server\\english_project_server\\Program.cs",
+              "RelativeDocumentMoniker": "english_project_server\\Program.cs",
+              "ToolTip": "L:\\\u05E9\u05E0\u05D4 \u05D1\\Ai\\c#\u002B\u002B\\\u05EA\u05DC\u05DE\u05D9\u05D3\u05D5\u05EA\\\u05D0\u05DC\u05D9\u05E9\u05D1\u05E2 \u05D2\u05E0\u05E5\\project\\english_project_server\\english_project_server\\Program.cs",
+              "RelativeToolTip": "english_project_server\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T12:56:15.264Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
