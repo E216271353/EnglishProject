@@ -37,7 +37,6 @@ namespace Services.Services
                 Username = userSignUp.Username,
                 Email = userSignUp.Email,
                 Password = userSignUp.Password,
-                PasswordHash = userSignUp.PasswordHash,
                 CurrentLevel = "Beginner",
                 CreatedAt = DateTime.UtcNow
             };
