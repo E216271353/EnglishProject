@@ -11,6 +11,6 @@ namespace Services.Interface
     public interface IUserService
     {
         Task<User> Login(UserLogin user);
-        Task<User> SignUp(User userSignUp);
+        Task<User> SignUp(UserSignUp userSignUp);
     }
 }

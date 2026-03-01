@@ -20,16 +20,16 @@ namespace Services.Services
         public async Task<User> Login(UserLogin user)
         {
             var users = await _repository.GetAll();
-            return users.FirstOrDefault(x => x.Id == user.Id && x.Password == user.Password);
+            return users.FirstOrDefault(x => x.Email == user.Email && x.Password == user.Password);
         }
 
-        public async Task<User> SignUp(User userSignUp)
+        public async Task<User> SignUp(UserSignUp userSignUp)
         {
             var users = await _repository.GetAll();
-            var existingUser = users.FirstOrDefault(x => x.Id == userSignUp.Id || x.Password == userSignUp.Password);
+            var existingUser = users.FirstOrDefault(x => x.Email == userSignUp.Email);
             if (existingUser != null)
             {
-                throw new InvalidOperationException("User with this ID or password already exists.");
+                throw new InvalidOperationException("User with this email already exists.");
             }
 
             var newUser = new User

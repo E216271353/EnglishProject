@@ -29,14 +29,21 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task<ActionResult<User>> SignUp([FromBody] User userSignUp)
+        public async Task<ActionResult<User>> SignUp([FromBody] UserSignUp userSignUp)
         {
-            var newUser = await _service.SignUp(userSignUp);
-            if (newUser == null)
+            try
             {
-                return BadRequest("User with this ID or password already exists.");
+                var newUser = await _service.SignUp(userSignUp);
+                return CreatedAtAction(nameof(Login), new { id = newUser.Id }, newUser);
             }
-            return CreatedAtAction(nameof(Login), new { id = newUser.Id }, newUser);
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
     }
 }

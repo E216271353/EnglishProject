@@ -22,12 +22,12 @@ namespace english_project_server
 
         public Task SaveChanges()
         {
-            return SaveChanges();
+            return base.SaveChangesAsync();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("server=sql;database=Database;trusted_connection=true;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=EnglishProjectDatabase;Integrated Security=true;TrustServerCertificate=True");
         }
         //(localdb)\MSSQLLocalDB  conection for database
     }
