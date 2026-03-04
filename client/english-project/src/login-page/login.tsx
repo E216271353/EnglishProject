@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './login.css';
 import { login, signUp } from '../services/user.service';
 import type { User, UserLogin } from '../types/user';
 
 
 const Login = () => {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [formData, setFormData] = useState({
@@ -157,6 +159,7 @@ const Login = () => {
                 } else {
                   const newUser: Partial<User> = { email: formData.email, password: formData.password, username: formData.fullName };
                   await signUp(newUser as User);
+                  navigate('/level-test');
                 }
               } catch (error) {
                 console.error(error);

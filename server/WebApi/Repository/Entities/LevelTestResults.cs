@@ -8,11 +8,11 @@ namespace Repository.Entities
 {
     public class LevelTestResults
     {
-        public int Id { get; set; } // מזהה תוצאה
-        public int UserId { get; set; } // קישור למשתמש
-        public int Score { get; set; } // ציון כולל
-        public string CalculatedLevel { get; set; } // רמה שחושבה
-        public DateTime DateTaken { get; set; } // תאריך ביצוע
+        public int Id { get; set; } 
+        public int UserId { get; set; } 
+        public int Score { get; set; }
+        public string CalculatedLevel { get; set; }
+        public DateTime DateTaken { get; set; }
 
     }
 }
