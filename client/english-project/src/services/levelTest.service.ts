@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { LevelTestQuestion, LevelTestResult } from '../types/levelTest';
 
 export const getLevelTestQuestions = async (): Promise<LevelTestQuestion[]> => {
-    const response = await axios.get<LevelTestQuestion[]>(`/api/LevelTest/questions`);
+    const response = await axios.get<LevelTestQuestion[]>(`/api/LevelTest/testQuestions`);
     return response.data;
 };
 

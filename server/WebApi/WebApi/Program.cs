@@ -37,6 +37,8 @@ builder.Services.AddScoped<VocabularyQuestionsRepository>();
 builder.Services.AddScoped<LevelTestQuestionsRepository>();
 builder.Services.AddScoped<LevelTestResultsRepository>();
 builder.Services.AddScoped<PracticeResultsRepository>();
+builder.Services.AddScoped<ILevelTestService, LevelTestService>();
+
 
 // Register services
 builder.Services.AddScoped<IUserService, UserService>();

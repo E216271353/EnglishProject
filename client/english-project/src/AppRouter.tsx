@@ -6,7 +6,7 @@ const AppRouter = () => (
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<Login />} />
-      <Route path="/level-test" element={<LevelTest />} />
+      <Route path="/levelTest" element={<LevelTest />} />
     </Routes>
   </BrowserRouter>
 );

@@ -35,8 +35,8 @@ const Login = () => {
   return (
     <div className={`auth-container ${isDarkMode ? 'dark' : 'light'}`}>
       {/* Theme Toggle Button */}
-      <button 
-        className="theme-toggle" 
+      <button
+        className="theme-toggle"
         onClick={() => setIsDarkMode(!isDarkMode)}
         aria-label="Toggle theme"
       >
@@ -50,7 +50,7 @@ const Login = () => {
           <div className="shape shape-3"></div>
           <div className="shape shape-4"></div>
         </div>
-        
+
         <div className="auth-header">
           <div className="logo-container">
             <div className="logo-circle">
@@ -159,14 +159,14 @@ const Login = () => {
                 } else {
                   const newUser: Partial<User> = { email: formData.email, password: formData.password, username: formData.fullName };
                   await signUp(newUser as User);
-                  navigate('/level-test');
+                  navigate('/levelTest');
                 }
               } catch (error) {
                 console.error(error);
               }
             }}
           >
-            {isLogin ? 'Login' : 'Sign Up'} 
+            {isLogin ? 'Login' : 'Sign Up'}
           </button>
         </form>
 
@@ -176,8 +176,8 @@ const Login = () => {
             <span>✨ Did you know? ✨</span>
           </div>
           <p className="fact-text">
-            {isLogin 
-              ? 'Learning a new language improves your memory! 🧠' 
+            {isLogin
+              ? 'Learning a new language improves your memory! 🧠'
               : 'English is spoken by over 1.5 billion people worldwide! 🌍'}
           </p>
         </div>
