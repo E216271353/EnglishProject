@@ -66,6 +66,7 @@ namespace Repository.Repositories
                 existingItem.OptionD = item.OptionD;
                 existingItem.CorrectAnswer = item.CorrectAnswer;
                 existingItem.LevelWeight = item.LevelWeight;
+                existingItem.Category = item.Category;
 
                 _context.SaveChanges(); // Save changes to the database
             }

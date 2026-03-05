@@ -17,5 +17,6 @@ namespace Repository.Entities
         public string OptionD { get; set; }
         public char CorrectAnswer { get; set; } 
         public int LevelWeight { get; set; } 
+        public string Category { get; set; }
     }
 }
