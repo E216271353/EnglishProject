@@ -18,6 +18,7 @@ namespace Repository.Interfaces
         public DbSet<LevelTestResults> LevelTestResults { get; set; }
         public DbSet<ReadingTexts> ReadingTexts { get; set; }
         public DbSet<ReadingQuestions> ReadingQuestions { get; set; }
+        public DbSet<CurrentUserLevel> CurrentUserLevels { get; set; }
         public Task SaveChanges();
     }
 }
