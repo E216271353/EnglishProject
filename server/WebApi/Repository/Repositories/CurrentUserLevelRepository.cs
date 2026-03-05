@@ -18,20 +18,20 @@ namespace Repository.Repositories
             this._context = context;
         }
 
-        public CurrentUserLevel AddItem(CurrentUserLevel item)
+        public async Task<CurrentUserLevel> AddItem(CurrentUserLevel item)
         {
             _context.CurrentUserLevels.Add(item);
-            _context.SaveChanges();
+            await _context.SaveChanges();
             return item;
         }
 
-        public void DeleteItem(int id)
+        public async Task DeleteItem(int id)
         {
-            var existingItem = GetById(id);
+            var existingItem = await GetById(id);
             if (existingItem != null)
             {
                 _context.CurrentUserLevels.Remove(existingItem);
-                _context.SaveChanges();
+                await _context.SaveChanges();
             }
             else
             {
@@ -39,9 +39,9 @@ namespace Repository.Repositories
             }
         }
 
-        public List<CurrentUserLevel> GetAll()
+        public async Task<List<CurrentUserLevel>> GetAll()
         {
-            return _context.CurrentUserLevels.ToList();
+            return await _context.CurrentUserLevels.ToListAsync();
         }
 
         public async Task<List<CurrentUserLevel>> GetAllAsync()
@@ -49,12 +49,12 @@ namespace Repository.Repositories
             return await _context.CurrentUserLevels.ToListAsync();
         }
 
-        public CurrentUserLevel GetById(int id)
+        public async Task<CurrentUserLevel> GetById(int id)
         {
-            return _context.CurrentUserLevels.Find(id);
+            return await _context.CurrentUserLevels.FindAsync(id);
         }
 
-        public void UpdateItem(int id, CurrentUserLevel item)
+        public async Task UpdateItemAsync(int id, CurrentUserLevel item)
         {
             var existingItem = _context.CurrentUserLevels.Find(id);
             if (existingItem != null)
@@ -64,7 +64,7 @@ namespace Repository.Repositories
                 existingItem.VocabularyLevel = item.VocabularyLevel;
                 existingItem.ReadingLevel = item.ReadingLevel;
                 existingItem.DateUpdated = item.DateUpdated;
-                _context.SaveChanges();
+                await _context.SaveChanges();
             }
             else
             {

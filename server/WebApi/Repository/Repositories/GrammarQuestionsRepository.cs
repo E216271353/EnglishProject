@@ -1,4 +1,5 @@
-﻿using Repository.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Repository.Entities;
 using Repository.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -17,20 +18,20 @@ namespace Repository.Repositories
             this._context = context;
         }
 
-        public GrammarQuestions AddItem(GrammarQuestions item)
+        public async Task<GrammarQuestions> AddItemAsync(GrammarQuestions item)
         {
-            _context.GrammarQuestions.Add(item); // Use Add to insert the item
-            _context.SaveChanges(); // Save changes to the database
+            await _context.GrammarQuestions.AddAsync(item); // Use AddAsync to insert the item
+            await _context.SaveChanges(); // Save changes to the database
             return item;
         }
 
-        public void DeleteItem(int id)
+        public async Task DeleteItemAsync(int id)
         {
-            var existingItem = GetById(id);
+            var existingItem = await GetByIdAsync(id);
             if (existingItem != null)
             {
                 _context.GrammarQuestions.Remove(existingItem); // Use Remove to delete the item
-                _context.SaveChanges(); // Save changes to the database
+                await _context.SaveChanges(); // Save changes to the database
             }
             else
             {
@@ -38,19 +39,19 @@ namespace Repository.Repositories
             }
         }
 
-        public List<GrammarQuestions> GetAll()
+        public async Task<List<GrammarQuestions>> GetAllAsync()
         {
-            return _context.GrammarQuestions.ToList(); // Retrieve all grammar questions
+            return await _context.GrammarQuestions.ToListAsync(); // Retrieve all grammar questions
         }
 
-        public GrammarQuestions GetById(int id)
+        public async Task<GrammarQuestions> GetByIdAsync(int id)
         {
-            return _context.GrammarQuestions.Find(id); // Use Find for efficiency
+            return await _context.GrammarQuestions.FindAsync(id); // Use FindAsync for efficiency
         }
 
-        public void UpdateItem(int id, GrammarQuestions item)
+        public async Task UpdateItemAsync(int id, GrammarQuestions item)
         {
-            var existingItem = _context.GrammarQuestions.Find(id);
+            var existingItem = await _context.GrammarQuestions.FindAsync(id);
             if (existingItem != null)
             {
                 existingItem.SentenceText = item.SentenceText;
@@ -59,7 +60,7 @@ namespace Repository.Repositories
                 existingItem.Hint = item.Hint;
                 existingItem.Explanation = item.Explanation;
 
-                _context.SaveChanges(); // Save changes to the database
+                await _context.SaveChanges(); // Save changes to the database
             }
             else
             {
@@ -67,5 +68,4 @@ namespace Repository.Repositories
             }
         }
     }
-
 }

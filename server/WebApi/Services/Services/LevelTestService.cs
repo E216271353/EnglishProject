@@ -20,7 +20,9 @@ namespace Services.Services
 
         public async Task<List<LevelTestQuestions>> GetAllQuestionsAsync()
         {
-            return await _questionsRepository.GetAllAsync();
+            try { return await _questionsRepository.GetAllAsync(); }
+            catch (Exception ex) { throw new Exception("Error retrieving level test questions: " + ex.Message); }
+          
         }
     }
 }

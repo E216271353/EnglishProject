@@ -1,4 +1,5 @@
-﻿using Repository.Entities;
+﻿
+using Repository.Entities;
 using Repository.Interfaces;
 using Services.Dto;
 using Services.Interface;
@@ -24,7 +25,8 @@ namespace Services.Services
         }
 
         public async Task<User> SignUp(UserSignUp userSignUp)
-        {
+        
+       {
             var users = await _repository.GetAll();
             var existingUser = users.FirstOrDefault(x => x.Email == userSignUp.Email);
             if (existingUser != null)
