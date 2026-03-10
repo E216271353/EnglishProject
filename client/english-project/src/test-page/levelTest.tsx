@@ -14,6 +14,16 @@ const LevelTest = () => {
   const [testResult, setTestResult] = useState<LevelTestResult | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
 
+  // score tracking by category
+  type Category = 'grammar' | 'vocabulary' | 'comprehension';
+  interface ScoreTracker { points: number; max: number; }
+  const initialScores: Record<Category, ScoreTracker> = {
+    grammar: { points: 0, max: 0 },
+    vocabulary: { points: 0, max: 0 },
+    comprehension: { points: 0, max: 0 }
+  };
+  const [scores, setScores] = useState(initialScores);
+
   useEffect(() => {
     loadQuestions();
   }, []);
@@ -46,6 +56,17 @@ const LevelTest = () => {
       isCorrect: isCorrect
     };
 
+    // update category scores
+    const cat = currentQuestion.category as Category;
+    const weight = currentQuestion.levelWeight;
+    setScores(prev => ({
+      ...prev,
+      [cat]: {
+        points: prev[cat].points + (isCorrect ? weight : 0),
+        max: prev[cat].max + weight
+      }
+    }));
+
     const updatedAnswers = [...userAnswers, newAnswer];
     setUserAnswers(updatedAnswers);
 
@@ -66,19 +87,24 @@ const LevelTest = () => {
   const finishTest = async (answers: UserAnswer[]) => {
     const correctCount = answers.filter(a => a.isCorrect).length;
     const totalQuestions = questions.length;
-    const percentage = (correctCount / totalQuestions) * 100;
 
+    // compute weighted totals
+    const totalPoints = scores.grammar.points + scores.vocabulary.points + scores.comprehension.points;
+    const totalMax = scores.grammar.max + scores.vocabulary.max + scores.comprehension.max;
+    const overallPct = totalMax > 0 ? (totalPoints / totalMax) * 100 : 0;
+
+    // determine level using combined percentage
     let level = 'Beginner';
-    if (percentage >= 80) level = 'Advanced';
-    else if (percentage >= 60) level = 'Intermediate';
-    else if (percentage >= 40) level = 'Elementary';
+    if (overallPct >= 80) level = 'Advanced';
+    else if (overallPct >= 50) level = 'Intermediate';
 
     const result: LevelTestResult = {
-      userId: 1, // This should come from logged-in user context
+      userId: 1, // Should come from logged‑in user context
       totalQuestions: totalQuestions,
       correctAnswers: correctCount,
       determinedLevel: level,
-      completedAt: new Date()
+      completedAt: new Date(),
+      score: totalPoints // weighted score
     };
 
     try {
@@ -97,6 +123,7 @@ const LevelTest = () => {
     setIsCompleted(false);
     setTestResult(null);
     setShowFeedback(false);
+    setScores(initialScores);
     loadQuestions();
   };
 
@@ -112,6 +139,10 @@ const LevelTest = () => {
   }
 
   if (isCompleted && testResult) {
+    const totalMaxPoints = scores.grammar.max + scores.vocabulary.max + scores.comprehension.max;
+    const totalEarnedPoints = scores.grammar.points + scores.vocabulary.points + scores.comprehension.points;
+    const weightedPct = totalMaxPoints > 0 ? Math.round((totalEarnedPoints / totalMaxPoints) * 100) : 0;
+
     return (
       <div className={`level-test-container ${isDarkMode ? 'dark' : 'light'}`}>
         <button 
@@ -152,10 +183,19 @@ const LevelTest = () => {
             <div className="stat-card">
               <div className="stat-icon">📊</div>
               <div className="stat-value">
-                {Math.round((testResult.correctAnswers / testResult.totalQuestions) * 100)}%
+                {weightedPct}%
               </div>
               <div className="stat-label">Score</div>
             </div>
+          </div>
+          {/* category breakdown */}
+          <div className="category-breakdown">
+            <h3>Category Scores</h3>
+            <ul>
+              <li>Grammar: {scores.grammar.points}/{scores.grammar.max} ({scores.grammar.max > 0 ? Math.round(scores.grammar.points / scores.grammar.max * 100) : 0}%)</li>
+              <li>Vocabulary: {scores.vocabulary.points}/{scores.vocabulary.max} ({scores.vocabulary.max > 0 ? Math.round(scores.vocabulary.points / scores.vocabulary.max * 100) : 0}%)</li>
+              <li>Comprehension: {scores.comprehension.points}/{scores.comprehension.max} ({scores.comprehension.max > 0 ? Math.round(scores.comprehension.points / scores.comprehension.max * 100) : 0}%)</li>
+            </ul>
           </div>
 
           <div className="level-badge">
