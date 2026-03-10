@@ -49,9 +49,9 @@ namespace Repository.Repositories
             return await _context.CurrentUserLevels.ToListAsync();
         }
 
-        public async Task<CurrentUserLevel> GetById(int id)
+        public async Task<CurrentUserLevel> GetByUserId(int UserId)
         {
-            return await _context.CurrentUserLevels.FindAsync(id);
+            return await _context.CurrentUserLevels.FindAsync(UserId);
         }
 
         public async Task UpdateItemAsync(int id, CurrentUserLevel item)
