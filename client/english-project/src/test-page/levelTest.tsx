@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import './levelTest.css';
 import { getLevelTestQuestions, submitLevelTest } from '../services/levelTest.service';
 import type { LevelTestQuestion, UserAnswer, LevelTestResult } from '../types/levelTest';
+import { calculateLevel } from '../types/currentUserLevel';
+import { CurrentUserLevelService } from '../services/currentUserLevel.service';
 
 const LevelTest = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -39,6 +41,8 @@ const LevelTest = () => {
       setIsLoading(false);
     }
   };
+
+  
 
   const handleAnswerSelect = (answer: string) => {
     setSelectedAnswer(answer);
@@ -93,22 +97,43 @@ const LevelTest = () => {
     const totalMax = scores.grammar.max + scores.vocabulary.max + scores.comprehension.max;
     const overallPct = totalMax > 0 ? (totalPoints / totalMax) * 100 : 0;
 
-    // determine level using combined percentage
-    let level = 'Beginner';
-    if (overallPct >= 80) level = 'Advanced';
-    else if (overallPct >= 50) level = 'Intermediate';
+    // Calculate percentage for each category
+    const grammarPct = scores.grammar.max > 0 ? (scores.grammar.points / scores.grammar.max) * 100 : 0;
+    const vocabularyPct = scores.vocabulary.max > 0 ? (scores.vocabulary.points / scores.vocabulary.max) * 100 : 0;
+    const readingPct = scores.comprehension.max > 0 ? (scores.comprehension.points / scores.comprehension.max) * 100 : 0;
+
+    // Determine individual levels for each category
+    const grammarLevel = calculateLevel(grammarPct);
+    const vocabularyLevel = calculateLevel(vocabularyPct);
+    const readingLevel = calculateLevel(readingPct);
+
+    // determine overall level using combined percentage
+    const overallLevel = calculateLevel(overallPct);
 
     const result: LevelTestResult = {
       userId: 1, // Should come from logged‑in user context
       totalQuestions: totalQuestions,
       correctAnswers: correctCount,
-      determinedLevel: level,
+      determinedLevel: overallLevel,
       completedAt: new Date(),
       score: totalPoints // weighted score
     };
 
     try {
+      // Submit the test result
       await submitLevelTest(result);
+      
+      // Create initial CurrentUserLevel record with category-specific levels
+      const userLevelService = new CurrentUserLevelService();
+      await userLevelService.addCurrentUserLevel({
+        id: 0, // Will be set by server
+        userId: result.userId,
+        grammarLevel: grammarLevel,
+        vocabularyLevel: vocabularyLevel,
+        readingLevel: readingLevel,
+        dateUpdated: new Date()
+      });
+      
       setTestResult(result);
       setIsCompleted(true);
     } catch (error) {
