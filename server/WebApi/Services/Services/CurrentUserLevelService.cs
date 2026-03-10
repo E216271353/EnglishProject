@@ -23,5 +23,9 @@ namespace Services.Services
             }
             await _repository.AddItem(currentUserLevel);
         }
+        public async Task<CurrentUserLevel> GetCurrentUserLevelByUserId(int UserId)
+        {
+            return await _repository.GetByUserId(UserId);
+        }
     }
 }
