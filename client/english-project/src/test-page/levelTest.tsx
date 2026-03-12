@@ -16,7 +16,6 @@ const LevelTest = () => {
   const [testResult, setTestResult] = useState<LevelTestResult | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
 
-  // score tracking by category
   type Category = 'grammar' | 'vocabulary' | 'comprehension';
   interface ScoreTracker { points: number; max: number; }
   const initialScores: Record<Category, ScoreTracker> = {
@@ -42,8 +41,6 @@ const LevelTest = () => {
     }
   };
 
-  
-
   const handleAnswerSelect = (answer: string) => {
     setSelectedAnswer(answer);
   };
@@ -60,7 +57,6 @@ const LevelTest = () => {
       isCorrect: isCorrect
     };
 
-    // update category scores
     const cat = currentQuestion.category as Category;
     const weight = currentQuestion.levelWeight;
     setScores(prev => ({
@@ -92,41 +88,31 @@ const LevelTest = () => {
     const correctCount = answers.filter(a => a.isCorrect).length;
     const totalQuestions = questions.length;
 
-    // compute weighted totals
     const totalPoints = scores.grammar.points + scores.vocabulary.points + scores.comprehension.points;
     const totalMax = scores.grammar.max + scores.vocabulary.max + scores.comprehension.max;
     const overallPct = totalMax > 0 ? (totalPoints / totalMax) * 100 : 0;
 
-    // Calculate percentage for each category
     const grammarPct = scores.grammar.max > 0 ? (scores.grammar.points / scores.grammar.max) * 100 : 0;
     const vocabularyPct = scores.vocabulary.max > 0 ? (scores.vocabulary.points / scores.vocabulary.max) * 100 : 0;
     const readingPct = scores.comprehension.max > 0 ? (scores.comprehension.points / scores.comprehension.max) * 100 : 0;
 
-    // Determine individual levels for each category
     const grammarLevel = calculateLevel(grammarPct);
     const vocabularyLevel = calculateLevel(vocabularyPct);
     const readingLevel = calculateLevel(readingPct);
 
-    // determine overall level using combined percentage
     const overallLevel = calculateLevel(overallPct);
 
     const result: LevelTestResult = {
-      userId: 1, // Should come from logged‑in user context
-      totalQuestions: totalQuestions,
-      correctAnswers: correctCount,
-      determinedLevel: overallLevel,
-      completedAt: new Date(),
-      score: totalPoints // weighted score
+      userId: 1,
+      score: totalPoints,
+      calculatedLevel: overallLevel,
+      dateTaken: new Date()
     };
 
     try {
-      // Submit the test result
       await submitLevelTest(result);
-      
-      // Create initial CurrentUserLevel record with category-specific levels
       const userLevelService = new CurrentUserLevelService();
       await userLevelService.addCurrentUserLevel({
-        id: 0, // Will be set by server
         userId: result.userId,
         grammarLevel: grammarLevel,
         vocabularyLevel: vocabularyLevel,
@@ -197,12 +183,12 @@ const LevelTest = () => {
           <div className="result-stats">
             <div className="stat-card">
               <div className="stat-icon">✅</div>
-              <div className="stat-value">{testResult.correctAnswers}</div>
+              <div className="stat-value">{testResult.calculatedLevel}</div>
               <div className="stat-label">Correct</div>
             </div>
             <div className="stat-card">
               <div className="stat-icon">📝</div>
-              <div className="stat-value">{testResult.totalQuestions}</div>
+              <div className="stat-value">{testResult.calculatedLevel}</div>
               <div className="stat-label">Total</div>
             </div>
             <div className="stat-card">
@@ -213,7 +199,7 @@ const LevelTest = () => {
               <div className="stat-label">Score</div>
             </div>
           </div>
-          {/* category breakdown */}
+          
           <div className="category-breakdown">
             <h3>Category Scores</h3>
             <ul>
@@ -226,29 +212,29 @@ const LevelTest = () => {
           <div className="level-badge">
             <div className="badge-glow"></div>
             <h2>Your Level:</h2>
-            <div className="level-name">{testResult.determinedLevel}</div>
+            <div className="level-name">{testResult.calculatedLevel}</div>
           </div>
 
           <div className="motivational-message">
-            {testResult.determinedLevel === 'Advanced' && (
+            {testResult.calculatedLevel === 'Advanced' && (
               <>
                 <p className="message-emoji">⭐</p>
                 <p className="message-text">You're a superstar! Keep reaching for the stars!</p>
               </>
             )}
-            {testResult.determinedLevel === 'Intermediate' && (
+            {testResult.calculatedLevel === 'Intermediate' && (
               <>
                 <p className="message-emoji">🌟</p>
                 <p className="message-text">Great work! You're making excellent progress!</p>
               </>
             )}
-            {testResult.determinedLevel === 'Elementary' && (
+            {testResult.calculatedLevel === 'Elementary' && (
               <>
                 <p className="message-emoji">🌱</p>
                 <p className="message-text">You're growing! Keep practicing and you'll bloom!</p>
               </>
             )}
-            {testResult.determinedLevel === 'Beginner' && (
+            {testResult.calculatedLevel === 'Beginner' && (
               <>
                 <p className="message-emoji">🌈</p>
                 <p className="message-text">Every expert was once a beginner! You're on the right path!</p>

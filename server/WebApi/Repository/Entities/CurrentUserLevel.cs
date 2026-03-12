@@ -14,6 +14,5 @@ namespace Repository.Entities
         public int VocabularyLevel { get; set; }
         public int ReadingLevel { get; set; }
         public DateTime DateUpdated { get; set; }
-        public User User { get; set; }
     }
 }

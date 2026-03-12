@@ -19,11 +19,7 @@ export type UserAnswer = {
 
 export type LevelTestResult = {
     userId: number;
-    totalQuestions: number;
-    correctAnswers: number;
-    determinedLevel: string;
-    completedAt: Date;
-    // total weighted score, stored by server entity
-    score?: number;
-    // NOTE: we don't persist category breakdown because server schema isn't changed
+    score: number;
+    calculatedLevel: string;
+    dateTaken: Date;
 };

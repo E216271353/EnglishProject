@@ -1,7 +1,6 @@
 export type LevelType = 'Beginner' | 'Intermediate' | 'Advanced';
 
 export type CurrentUserLevel = {
-    id: number;
     userId: number;
     grammarLevel: LevelType;
     vocabularyLevel: LevelType;

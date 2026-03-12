@@ -13,6 +13,5 @@ namespace Repository.Entities
         public int Score { get; set; }
         public string CalculatedLevel { get; set; }
         public DateTime DateTaken { get; set; }
-
     }
 }
