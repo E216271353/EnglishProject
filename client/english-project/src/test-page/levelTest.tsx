@@ -59,13 +59,15 @@ const LevelTest = () => {
 
     const cat = currentQuestion.category as Category;
     const weight = currentQuestion.levelWeight;
-    setScores(prev => ({
-      ...prev,
+    const currentCategoryScore = scores[cat] || { points: 0, max: 0 };
+    const updatedScores = {
+      ...scores,
       [cat]: {
-        points: prev[cat].points + (isCorrect ? weight : 0),
-        max: prev[cat].max + weight
+        points: currentCategoryScore.points + (isCorrect ? weight : 0),
+        max: currentCategoryScore.max + weight
       }
-    }));
+    };
+    setScores(updatedScores);
 
     const updatedAnswers = [...userAnswers, newAnswer];
     setUserAnswers(updatedAnswers);
@@ -79,22 +81,28 @@ const LevelTest = () => {
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       } else {
-        finishTest(updatedAnswers);
+        finishTest(updatedAnswers, updatedScores);
       }
     }, 1500);
   };
 
-  const finishTest = async (answers: UserAnswer[]) => {
+  const finishTest = async (answers: UserAnswer[], finalScores: Record<Category, ScoreTracker>) => {
     const correctCount = answers.filter(a => a.isCorrect).length;
     const totalQuestions = questions.length;
 
-    const totalPoints = scores.grammar.points + scores.vocabulary.points + scores.comprehension.points;
-    const totalMax = scores.grammar.max + scores.vocabulary.max + scores.comprehension.max;
+    const safeScores = {
+      grammar: finalScores.grammar || { points: 0, max: 0 },
+      vocabulary: finalScores.vocabulary || { points: 0, max: 0 },
+      comprehension: finalScores.comprehension || { points: 0, max: 0 }
+    };
+
+    const totalPoints = safeScores.grammar.points + safeScores.vocabulary.points + safeScores.comprehension.points;
+    const totalMax = safeScores.grammar.max + safeScores.vocabulary.max + safeScores.comprehension.max;
     const overallPct = totalMax > 0 ? (totalPoints / totalMax) * 100 : 0;
 
-    const grammarPct = scores.grammar.max > 0 ? (scores.grammar.points / scores.grammar.max) * 100 : 0;
-    const vocabularyPct = scores.vocabulary.max > 0 ? (scores.vocabulary.points / scores.vocabulary.max) * 100 : 0;
-    const readingPct = scores.comprehension.max > 0 ? (scores.comprehension.points / scores.comprehension.max) * 100 : 0;
+    const grammarPct = safeScores.grammar.max > 0 ? (safeScores.grammar.points / safeScores.grammar.max) * 100 : 0;
+    const vocabularyPct = safeScores.vocabulary.max > 0 ? (safeScores.vocabulary.points / safeScores.vocabulary.max) * 100 : 0;
+    const readingPct = safeScores.comprehension.max > 0 ? (safeScores.comprehension.points / safeScores.comprehension.max) * 100 : 0;
 
     const grammarLevel = calculateLevel(grammarPct);
     const vocabularyLevel = calculateLevel(vocabularyPct);
