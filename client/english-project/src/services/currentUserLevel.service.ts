@@ -1,28 +1,28 @@
 import type { CurrentUserLevel, LevelType } from '../types/currentUserLevel';
 import { calculateLevel } from '../types/currentUserLevel';
 
-export class CurrentUserLevelService {
 
 
-    async addCurrentUserLevel(currentUserLevel: CurrentUserLevel): Promise<void> {
-        if (!currentUserLevel) {
-            throw new Error("Current user level cannot be null.");
-        }
 
-        const response = await fetch('/api/currentuserlevel', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(currentUserLevel),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to add current user level');
-        }
+export const addCurrentUserLevel = async (currentUserLevel: CurrentUserLevel): Promise<void> => {
+    if (!currentUserLevel) {
+        throw new Error("Current user level cannot be null.");
     }
 
-    async getUserLevel(userId: number): Promise<CurrentUserLevel | null> {
+    const response = await fetch('/api/CurrentUserLevel/addUserLevel', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(currentUserLevel),
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to add current user level');
+    }
+}
+
+    export const getUserLevel = async (userId: number): Promise<CurrentUserLevel | null> =>  {
         try {
             const response = await fetch(`/api/currentuserlevel/${userId}`);
             
@@ -41,16 +41,15 @@ export class CurrentUserLevelService {
         }
     }
 
- 
-    async updateUserLevel(
+   export const updateUserLevel = async (
         userId: number, 
         category: 'grammar' | 'vocabulary' | 'reading',
         percentage: number
-    ): Promise<void> {
+    ): Promise<void> =>  {
         const newLevel = calculateLevel(percentage);
         
         // Get existing level
-        const currentLevel = await this.getUserLevel(userId);
+        const currentLevel = await getUserLevel(userId);
         
         if (!currentLevel) {
             throw new Error('User level not found. User must complete the level test first.');
@@ -71,12 +70,7 @@ export class CurrentUserLevelService {
             body: JSON.stringify(updatedLevel),
         });
 
-        if (!response.ok) {
-            throw new Error(`Failed to update ${category} level`);
-        }
-    }
-
-    calculateLevel(percentage: number): LevelType {
-        return calculateLevel(percentage);
+    if (!response.ok) {
+        throw new Error(`Failed to update ${category} level`);
     }
 }

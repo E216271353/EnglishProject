@@ -8,7 +8,7 @@ export type LevelTestQuestion = {
     correctAnswer: string;
     levelWeight: number;
     // new field added on server: grammar, vocabulary or comprehension
-    category: 'grammar' | 'vocabulary' | 'comprehension';
+    category: 'grammar' | 'vocabulary' | 'reading';
 };
 
 export type UserAnswer = {

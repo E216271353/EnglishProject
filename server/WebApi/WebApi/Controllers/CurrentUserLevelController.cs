@@ -29,7 +29,7 @@ namespace WebApi.Controllers
             await _service.AddCurrentUserLevel(currentUserLevel);
             return Ok();
         }
-        [HttpGet("user/{userId}")]
+        [HttpGet("currentuserlevel/{userId}")]
         public async Task<IActionResult> GetCurrentUserLevelByUserId(int UserId)
         {
             var currentUserLevel = await _service.GetCurrentUserLevelByUserId(UserId);

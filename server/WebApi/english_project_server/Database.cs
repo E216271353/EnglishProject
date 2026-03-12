@@ -4,6 +4,7 @@ using Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,10 @@ namespace english_project_server
 {
     public class Database : DbContext, IContext
     {
+        public Database(DbContextOptions<Database> options) : base(options)
+        {
+        }
+
         public DbSet<LevelTestQuestions> LevelTestQuestions { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<GrammarQuestions> GrammarQuestions { get; set; }
@@ -26,9 +31,18 @@ namespace english_project_server
             return base.SaveChangesAsync();
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CurrentUserLevel>().ToTable("CurrentUserLevels");
+            base.OnModelCreating(modelBuilder);
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=EnglishProjectDatabase;Integrated Security=true;TrustServerCertificate=True");
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=EnglishProjectDatabase;Integrated Security=true;TrustServerCertificate=True");
+            }
         }
         //(localdb)\MSSQLLocalDB  conection for database
     }

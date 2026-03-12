@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import './levelTest.css';
 import { getLevelTestQuestions, submitLevelTest } from '../services/levelTest.service';
 import type { LevelTestQuestion, UserAnswer, LevelTestResult } from '../types/levelTest';
-import { calculateLevel } from '../types/currentUserLevel';
-import { CurrentUserLevelService } from '../services/currentUserLevel.service';
+import { calculateLevel, type CurrentUserLevel } from '../types/currentUserLevel';
+import { addCurrentUserLevel } from '../services/currentUserLevel.service';
 
 const LevelTest = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -16,12 +16,12 @@ const LevelTest = () => {
   const [testResult, setTestResult] = useState<LevelTestResult | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
 
-  type Category = 'grammar' | 'vocabulary' | 'comprehension';
+  type Category = 'grammar' | 'vocabulary' | 'reading';
   interface ScoreTracker { points: number; max: number; }
   const initialScores: Record<Category, ScoreTracker> = {
     grammar: { points: 0, max: 0 },
     vocabulary: { points: 0, max: 0 },
-    comprehension: { points: 0, max: 0 }
+    reading: { points: 0, max: 0 }
   };
   const [scores, setScores] = useState(initialScores);
 
@@ -57,8 +57,14 @@ const LevelTest = () => {
       isCorrect: isCorrect
     };
 
-    const cat = currentQuestion.category as Category;
+    const cat = (currentQuestion.category?.toLowerCase() || 'grammar') as Category;
     const weight = currentQuestion.levelWeight;
+    
+    console.log('Current question category:', cat);
+    console.log('Current question weight:', weight);
+    console.log('Is correct:', isCorrect);
+    console.log('Current scores:', scores);
+    
     const currentCategoryScore = scores[cat] || { points: 0, max: 0 };
     const updatedScores = {
       ...scores,
@@ -67,6 +73,8 @@ const LevelTest = () => {
         max: currentCategoryScore.max + weight
       }
     };
+    
+    console.log('Updated scores:', updatedScores);
     setScores(updatedScores);
 
     const updatedAnswers = [...userAnswers, newAnswer];
@@ -90,19 +98,25 @@ const LevelTest = () => {
     const correctCount = answers.filter(a => a.isCorrect).length;
     const totalQuestions = questions.length;
 
+    console.log('Final scores received:', finalScores);
+
     const safeScores = {
       grammar: finalScores.grammar || { points: 0, max: 0 },
       vocabulary: finalScores.vocabulary || { points: 0, max: 0 },
-      comprehension: finalScores.comprehension || { points: 0, max: 0 }
+      reading: finalScores.reading || { points: 0, max: 0 }
     };
 
-    const totalPoints = safeScores.grammar.points + safeScores.vocabulary.points + safeScores.comprehension.points;
-    const totalMax = safeScores.grammar.max + safeScores.vocabulary.max + safeScores.comprehension.max;
+    console.log('Safe scores:', safeScores);
+
+    const totalPoints = safeScores.grammar.points + safeScores.vocabulary.points + safeScores.reading.points;
+    const totalMax = safeScores.grammar.max + safeScores.vocabulary.max + safeScores.reading.max;
+    
+    console.log('Total points:', totalPoints, 'Total max:', totalMax);
     const overallPct = totalMax > 0 ? (totalPoints / totalMax) * 100 : 0;
 
     const grammarPct = safeScores.grammar.max > 0 ? (safeScores.grammar.points / safeScores.grammar.max) * 100 : 0;
     const vocabularyPct = safeScores.vocabulary.max > 0 ? (safeScores.vocabulary.points / safeScores.vocabulary.max) * 100 : 0;
-    const readingPct = safeScores.comprehension.max > 0 ? (safeScores.comprehension.points / safeScores.comprehension.max) * 100 : 0;
+    const readingPct = safeScores.reading.max > 0 ? (safeScores.reading.points / safeScores.reading.max) * 100 : 0;
 
     const grammarLevel = calculateLevel(grammarPct);
     const vocabularyLevel = calculateLevel(vocabularyPct);
@@ -111,22 +125,24 @@ const LevelTest = () => {
     const overallLevel = calculateLevel(overallPct);
 
     const result: LevelTestResult = {
-      userId: 1,
+      userId: sessionStorage.getItem('userId') ? parseInt(sessionStorage.getItem('userId') as string) : 0,
       score: totalPoints,
       calculatedLevel: overallLevel,
       dateTaken: new Date()
     };
 
-    try {
-      await submitLevelTest(result);
-      const userLevelService = new CurrentUserLevelService();
-      await userLevelService.addCurrentUserLevel({
+    const userLevel: CurrentUserLevel = {
         userId: result.userId,
         grammarLevel: grammarLevel,
         vocabularyLevel: vocabularyLevel,
         readingLevel: readingLevel,
         dateUpdated: new Date()
-      });
+      };
+
+    try {
+      await submitLevelTest(result);
+      await addCurrentUserLevel(userLevel);
+
       
       setTestResult(result);
       setIsCompleted(true);
@@ -158,8 +174,8 @@ const LevelTest = () => {
   }
 
   if (isCompleted && testResult) {
-    const totalMaxPoints = scores.grammar.max + scores.vocabulary.max + scores.comprehension.max;
-    const totalEarnedPoints = scores.grammar.points + scores.vocabulary.points + scores.comprehension.points;
+    const totalMaxPoints = scores.grammar.max + scores.vocabulary.max + scores.reading.max;
+    const totalEarnedPoints = scores.grammar.points + scores.vocabulary.points + scores.reading.points;
     const weightedPct = totalMaxPoints > 0 ? Math.round((totalEarnedPoints / totalMaxPoints) * 100) : 0;
 
     return (
@@ -213,7 +229,7 @@ const LevelTest = () => {
             <ul>
               <li>Grammar: {scores.grammar.points}/{scores.grammar.max} ({scores.grammar.max > 0 ? Math.round(scores.grammar.points / scores.grammar.max * 100) : 0}%)</li>
               <li>Vocabulary: {scores.vocabulary.points}/{scores.vocabulary.max} ({scores.vocabulary.max > 0 ? Math.round(scores.vocabulary.points / scores.vocabulary.max * 100) : 0}%)</li>
-              <li>Comprehension: {scores.comprehension.points}/{scores.comprehension.max} ({scores.comprehension.max > 0 ? Math.round(scores.comprehension.points / scores.comprehension.max * 100) : 0}%)</li>
+              <li>Reading: {scores.reading.points}/{scores.reading.max} ({scores.reading.max > 0 ? Math.round(scores.reading.points / scores.reading.max * 100) : 0}%)</li>
             </ul>
           </div>
 
