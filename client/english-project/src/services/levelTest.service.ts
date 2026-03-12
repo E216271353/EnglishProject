@@ -7,6 +7,6 @@ export const getLevelTestQuestions = async (): Promise<LevelTestQuestion[]> => {
 };
 
 export const submitLevelTest = async (result: LevelTestResult): Promise<LevelTestResult> => {
-    const response = await axios.post<LevelTestResult>(`/api/LevelTest/submit`, result);
+    const response = await axios.post<LevelTestResult>(`/api/LevelTest/addResult`, result);
     return response.data;
 };

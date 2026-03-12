@@ -17,7 +17,8 @@ namespace WebApi.Controllers
             _service = service;
         }
 
-        [HttpPost]
+        [HttpPost("addUserLevel")]
+            
         public async Task<IActionResult> AddCurrentUserLevel([FromBody] CurrentUserLevel currentUserLevel)
         {
             if (currentUserLevel == null)
@@ -27,6 +28,16 @@ namespace WebApi.Controllers
 
             await _service.AddCurrentUserLevel(currentUserLevel);
             return Ok();
+        }
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetCurrentUserLevelByUserId(int UserId)
+        {
+            var currentUserLevel = await _service.GetCurrentUserLevelByUserId(UserId);
+            if (currentUserLevel == null)
+            {
+                return NotFound();
+            }
+            return Ok(currentUserLevel);
         }
     }
 }

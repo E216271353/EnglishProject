@@ -7,5 +7,6 @@ namespace Services.Interface
     public interface ILevelTestService
     {
         Task<List<LevelTestQuestions>> GetAllQuestionsAsync();
+        Task<LevelTestResults> AddResultAsync(LevelTestResults ltr);
     }
 }

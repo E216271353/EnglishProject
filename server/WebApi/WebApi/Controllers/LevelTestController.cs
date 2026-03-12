@@ -23,5 +23,16 @@ namespace WebApi.Controllers
             var questions = await _levelTestService.GetAllQuestionsAsync();
             return Ok(questions);
         }
+        [HttpPost("addResult")]
+        public async Task<ActionResult<LevelTestResults>> AddResult([FromBody] LevelTestResults ltr)
+        {
+            if (ltr == null)
+            {
+                return BadRequest("Invalid level test result.");
+            }
+
+            var result = await _levelTestService.AddResultAsync(ltr);
+            return CreatedAtAction(nameof(GetAllQuestions), new { id = result.Id }, result);
+        }
     }
 }

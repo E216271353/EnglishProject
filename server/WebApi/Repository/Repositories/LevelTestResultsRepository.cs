@@ -17,10 +17,10 @@ namespace Repository.Repositories
             this._context = context;
         }
 
-        public LevelTestResults AddItem(LevelTestResults item)
+        public async Task<LevelTestResults> AddItem(LevelTestResults item)
         {
-            _context.LevelTestResults.Add(item); // Use Add to insert the item
-            _context.SaveChanges(); // Save changes to the database
+            await _context.LevelTestResults.AddAsync(item); // Use AddAsync to insert the item
+            await _context.SaveChanges(); // Save changes to the database
             return item;
         }
 
