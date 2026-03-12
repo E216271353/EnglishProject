@@ -27,7 +27,7 @@ namespace Repository.Repositories
 
         public async Task DeleteItem(int id)
         {
-            var existingItem = await GetById(id);
+            var existingItem = await GetByUserId(id);
             if (existingItem != null)
             {
                 _context.CurrentUserLevels.Remove(existingItem);

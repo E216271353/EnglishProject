@@ -155,10 +155,15 @@ const Login = () => {
               try {
                 if (isLogin) {
                   const userLogin: UserLogin = { email: formData.email, password: formData.password };
-                  await login(userLogin);
+                  const user = await login(userLogin);
+                  sessionStorage.setItem('userId', user.id.toString());
+                  sessionStorage.setItem('username', user.username);
+                  navigate('/levelTest');
                 } else {
                   const newUser: Partial<User> = { email: formData.email, password: formData.password, username: formData.fullName };
-                  await signUp(newUser as User);
+                  const user = await signUp(newUser as User);
+                  sessionStorage.setItem('userId', user.id.toString());
+                  sessionStorage.setItem('username', user.username);
                   navigate('/levelTest');
                 }
               } catch (error) {
