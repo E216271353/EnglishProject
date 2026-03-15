@@ -50,7 +50,7 @@ builder.Services.AddScoped<CurrentUserLevelRepository>();
 builder.Services.AddScoped<ILevelTestService, LevelTestService>();
 builder.Services.AddScoped<ICurrentUserLevelService, CurrentUserLevelService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IReadingQuestionsService, ReadingQuestionsService>();
+builder.Services.AddScoped<IReadingService, ReadingService>();
 builder.Services.AddScoped<IGrammarQuestions, GrammarQuestionsService>();
 builder.Services.AddScoped<IVocabularyQuestions, VocabularyQuestionsService>();
 
