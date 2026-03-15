@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Services.Interface
 {
-    public interface ICurrentUserLevel
+    public interface ICurrentUserLevelService
     {
         Task AddCurrentUserLevel(CurrentUserLevel currentUserLevel);
         Task<CurrentUserLevel> GetCurrentUserLevelByUserId(int UserId);

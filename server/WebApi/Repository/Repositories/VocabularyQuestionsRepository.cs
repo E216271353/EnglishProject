@@ -8,46 +8,46 @@ using System.Threading.Tasks;
 
 namespace Repository.Repositories
 {
-   public class VocabularyQuestionsRepository
-   {
-       
-            private readonly IContext _context;
-            public VocabularyQuestionsRepository(IContext context)
-            {
-                this._context = context;
-            }
-            public VocabularyQuestions AddItem(VocabularyQuestions item)
-            {
-                _context.VocabularyQuestions.ToList().Add(item);
+    public class VocabularyQuestionsRepository
+    {
 
-                _context.SaveChanges();
-                return item;
-            }
+        private readonly IContext _context;
+        public VocabularyQuestionsRepository(IContext context)
+        {
+            this._context = context;
+        }
+        public async Task<VocabularyQuestions> AddItemAsync(VocabularyQuestions item)
+        {
+            await Task.Run(() => _context.VocabularyQuestions.ToList().Add(item));
+            await _context.SaveChanges();
+            return item;
+        }
 
-            public void DeleteItem(int id)
-            {
-                _context.VocabularyQuestions.ToList().Remove(GetById(id));
-                _context.SaveChanges();
-            }
+        public async Task DeleteItemAsync(int id)
+        {
+            var item = await GetByIdAsync(id);
+            await Task.Run(() => _context.VocabularyQuestions.ToList().Remove(item));
+            await _context.SaveChanges();
+        }
 
-            public List<VocabularyQuestions> GetAll()
-            {
-                return _context.VocabularyQuestions.ToList();
-            }
+        public async Task<List<VocabularyQuestions>> GetAllAsync()
+        {
+            return await Task.Run(() => _context.VocabularyQuestions.ToList());
+        }
 
-            public VocabularyQuestions GetById(int id)
-            {
-                return _context.VocabularyQuestions.ToList().FirstOrDefault(x => x.Id == id);
-            }
+        public async Task<VocabularyQuestions> GetByIdAsync(int id)
+        {
+            return await Task.Run(() => _context.VocabularyQuestions.ToList().FirstOrDefault(x => x.Id == id));
+        }
 
-            public void UpdateItem(int id, VocabularyQuestions item)
-            {
-                var VocabularyQuestions = GetById(id);
-                VocabularyQuestions.Id = item.Id;
-                VocabularyQuestions.Word = item.Word;
-                VocabularyQuestions.CorrectMatch = item.CorrectMatch;
-                VocabularyQuestions.Level = item.Level;
-                _context.SaveChanges();
-            }
-   }
+        public async Task UpdateItemAsync(int id, VocabularyQuestions item)
+        {
+            var vocabularyQuestion = await GetByIdAsync(id);
+            vocabularyQuestion.Id = item.Id;
+            vocabularyQuestion.Word = item.Word;
+            vocabularyQuestion.CorrectMatch = item.CorrectMatch;
+            vocabularyQuestion.Level = item.Level;
+            await _context.SaveChanges();
+        }
+    }
 }
