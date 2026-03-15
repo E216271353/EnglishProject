@@ -8,22 +8,22 @@ namespace WebApi.Controllers
     [Route("api/[controller]")]
     public class ReadingQuestionsController : ControllerBase
     {
-        private readonly IReadingQuestionsService _readingQuestionsService;
+        private readonly IReadingService _readingQuestionsService;
 
-        public ReadingQuestionsController(IReadingQuestionsService readingQuestionsService)
+        public ReadingQuestionsController(IReadingService readingQuestionsService)
         {
             _readingQuestionsService = readingQuestionsService;
         }
 
         [HttpGet("{level}")]
-        public async Task<ActionResult<IEnumerable<ReadingQuestions>>> GetQuestionsByLevel(string level)
+        public async Task<ActionResult<IEnumerable<ReadingQuestions>>> GetQuestionsByText(int readingId)
         {
-            if (string.IsNullOrWhiteSpace(level))
+            if (!(readingId is > 0))
             {
-                return BadRequest("Level parameter is required.");
+                return BadRequest("text parameter is required.");
             }
 
-            var questions = await _readingQuestionsService.GetReadingQuestionByLevel(level);
+            var questions = await _readingQuestionsService.GetQuestionsByTextId(readingId);
             return Ok(questions);
         }
     }

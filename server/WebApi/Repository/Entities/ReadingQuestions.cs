@@ -14,8 +14,7 @@ namespace Repository.Entities
         public string OptionA { get; set; } // אפשרות A
         public string OptionB { get; set; } // אפשרות B
         public string OptionC { get; set; } // אפשרות C
-        public string OptionD { get; set; } // אפשרות D
-        public string Level { get; set; } // רמת השאלה
+        public string OptionD { get; set; } // אפשרות 
         public char CorrectAnswer { get; set; } // תשובה נכונה A/B/C/D
     }
 }
