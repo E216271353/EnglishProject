@@ -6,7 +6,7 @@ using Repository.Repositories;
 
 namespace Services.Services
 {
-    public class CurrentUserLevelService : ICurrentUserLevelService
+    public class CurrentUserLevelService : ICurrentUserLevel
     {
         private readonly CurrentUserLevelRepository _repository;
 

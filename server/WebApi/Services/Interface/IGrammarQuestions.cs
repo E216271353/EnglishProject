@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Services.Interface
 {
-    public interface ICurrentUserLevelService
+    public interface IGrammarQuestions
     {
-        Task AddCurrentUserLevel(CurrentUserLevel currentUserLevel);
-        Task<CurrentUserLevel> GetCurrentUserLevelByUserId(int UserId);
+        Task<IEnumerable<GrammarQuestions>> GetGrammarQuestionsByUserLevel(string level);
     }
 }
