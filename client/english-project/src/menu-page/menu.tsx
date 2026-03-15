@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import GrammarGame from '../grammar-game/grammarGame';
 import './menu.css';
 
 const Menu = () => {
@@ -7,6 +8,7 @@ const Menu = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [username, setUsername] = useState('');
   const [userLevel, setUserLevel] = useState('');
+  const [showGrammarGame, setShowGrammarGame] = useState(false);
 
   useEffect(() => {
     // Get user data from session storage
@@ -61,7 +63,11 @@ const Menu = () => {
   ];
 
   const handleMenuClick = (path: string) => {
-    navigate(path);
+    if (path === '/grammar') {
+      setShowGrammarGame(true);
+    } else {
+      navigate(path);
+    }
   };
 
   return (
@@ -101,18 +107,35 @@ const Menu = () => {
           </div>
 
           <div className="welcome-card">
-            <div className="logo-container">
-              <div className="logo-circle">
-                <span className="logo-icon">🎓</span>
-              </div>
-            </div>
-            <h1 className="welcome-title">!ברוכים הבאים ללמידת אנגלית</h1>
-            <p className="welcome-subtitle">✨ בחר פעילות ותתחיל את המסע שלך! ✨</p>
-            
-            <div className="motivational-message">
-              <p className="message-emoji">🌟</p>
-              <p className="message-text">כל יום של לימוד מקרב אותך למטרה!</p>
-            </div>
+            {!showGrammarGame ? (
+              <>
+                <div className="logo-container">
+                  <div className="logo-circle">
+                    <span className="logo-icon">🎓</span>
+                  </div>
+                </div>
+                <h1 className="welcome-title">!ברוכים הבאים ללמידת אנגלית</h1>
+                <p className="welcome-subtitle">✨ בחר פעילות ותתחיל את המסע שלך! ✨</p>
+                
+                <div className="motivational-message">
+                  <p className="message-emoji">🌟</p>
+                  <p className="message-text">כל יום של לימוד מקרב אותך למטרה!</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="game-header-wrapper">
+                  <button 
+                    className="back-to-menu-button" 
+                    onClick={() => setShowGrammarGame(false)}
+                  >
+                    ← Back to Menu
+                  </button>
+                  <h2 className="game-title">Grammar Game 📚</h2>
+                </div>
+                <GrammarGame />
+              </>
+            )}
           </div>
         </div>
 

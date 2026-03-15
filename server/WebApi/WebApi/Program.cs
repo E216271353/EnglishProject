@@ -48,15 +48,17 @@ builder.Services.AddScoped<CurrentUserLevelRepository>();
 
 // Register services
 builder.Services.AddScoped<ILevelTestService, LevelTestService>();
-builder.Services.AddScoped<ICurrentUserLevelService, CurrentUserLevelService>();
+builder.Services.AddScoped<ICurrentUserLevel, CurrentUserLevelService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IReadingService, ReadingService>();
+builder.Services.AddScoped<IGrammarQuestions, GrammarQuestionsService>();
+builder.Services.AddScoped<IVocabularyQuestions, VocabularyQuestionsService>();
 
 var app = builder.Build();
 
 
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline. 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
