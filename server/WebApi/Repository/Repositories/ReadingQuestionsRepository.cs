@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository.Repositories
 {
@@ -17,20 +18,20 @@ namespace Repository.Repositories
             this._context = context;
         }
 
-        public ReadingQuestions AddItem(ReadingQuestions item)
+        public async Task<ReadingQuestions> AddItemAsync(ReadingQuestions item)
         {
-            _context.ReadingQuestions.Add(item);
-            _context.SaveChanges(); 
+            await _context.ReadingQuestions.AddAsync(item);
+            await _context.SaveChanges(); 
             return item;
         }
 
-        public void DeleteItem(int id)
+        public async Task DeleteItemAsync(int id)
         {
-            var existingItem = GetById(id);
+            var existingItem = await GetByIdAsync(id);
             if (existingItem != null)
             {
                 _context.ReadingQuestions.Remove(existingItem); 
-                _context.SaveChanges();
+                await _context.SaveChanges();
             }
             else
             {
@@ -38,19 +39,19 @@ namespace Repository.Repositories
             }
         }
 
-        public List<ReadingQuestions> GetAll()
+        public async Task<List<ReadingQuestions>> GetAllAsync()
         {
-            return _context.ReadingQuestions.ToList();
+            return await _context.ReadingQuestions.ToListAsync();
         }
 
-        public ReadingQuestions GetById(int id)
+        public async Task<ReadingQuestions> GetByIdAsync(int id)
         {
-            return _context.ReadingQuestions.Find(id); 
+            return await _context.ReadingQuestions.FindAsync(id); 
         }
 
-        public void UpdateItem(int id1, ReadingQuestions item)
+        public async Task UpdateItemAsync(int id1, ReadingQuestions item)
         {
-            var existingItem = _context.ReadingQuestions.Find(id1);
+            var existingItem = await _context.ReadingQuestions.FindAsync(id1);
             if (existingItem != null)
             {
                 existingItem.ReadingId = item.ReadingId;
@@ -61,7 +62,7 @@ namespace Repository.Repositories
                 existingItem.OptionD = item.OptionD;
                 existingItem.CorrectAnswer = item.CorrectAnswer;
 
-                _context.SaveChanges();
+                await _context.SaveChanges();
             }
             else
             {
@@ -69,5 +70,4 @@ namespace Repository.Repositories
             }
         }
     }
-
 }

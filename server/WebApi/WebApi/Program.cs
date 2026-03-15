@@ -45,11 +45,12 @@ builder.Services.AddScoped<LevelTestQuestionsRepository>();
 builder.Services.AddScoped<LevelTestResultsRepository>();
 builder.Services.AddScoped<PracticeResultsRepository>();
 builder.Services.AddScoped<CurrentUserLevelRepository>();
-builder.Services.AddScoped<ILevelTestService, LevelTestService>();
 
 // Register services
+builder.Services.AddScoped<ILevelTestService, LevelTestService>();
 builder.Services.AddScoped<ICurrentUserLevelService, CurrentUserLevelService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IReadingQuestionsService, ReadingQuestionsService>();
 
 var app = builder.Build();
 
