@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './levelTest.css';
 import { getLevelTestQuestions, submitLevelTest } from '../services/levelTest.service';
 import type { LevelTestQuestion, UserAnswer, LevelTestResult } from '../types/levelTest';
@@ -6,6 +7,7 @@ import { calculateLevel, type CurrentUserLevel } from '../types/currentUserLevel
 import { addCurrentUserLevel } from '../services/currentUserLevel.service';
 
 const LevelTest = () => {
+  const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [questions, setQuestions] = useState<LevelTestQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -136,7 +138,7 @@ const LevelTest = () => {
         grammarLevel: grammarLevel,
         vocabularyLevel: vocabularyLevel,
         readingLevel: readingLevel,
-        dateUpdated: new Date()
+        dateUpdated: new Date() 
       };
 
     try {
@@ -268,6 +270,9 @@ const LevelTest = () => {
 
           <button className="action-btn" onClick={handleRetakeTest}>
             🔄 Try Again
+          </button>
+          <button className="action-btn" onClick={() => navigate('/menu')} style={{ marginTop: '10px', background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)' }}>
+            ➡️ Continue to Menu
           </button>
         </div>
       </div>

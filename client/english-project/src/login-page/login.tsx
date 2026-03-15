@@ -158,7 +158,7 @@ const Login = () => {
                   const user = await login(userLogin);
                   sessionStorage.setItem('userId', user.id.toString());
                   sessionStorage.setItem('username', user.username);
-                  navigate('/levelTest');
+                  navigate('/menu');
                 } else {
                   const newUser: Partial<User> = { email: formData.email, password: formData.password, username: formData.fullName };
                   const user = await signUp(newUser as User);
