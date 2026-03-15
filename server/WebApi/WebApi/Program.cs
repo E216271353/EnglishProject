@@ -48,10 +48,11 @@ builder.Services.AddScoped<CurrentUserLevelRepository>();
 
 // Register services
 builder.Services.AddScoped<ILevelTestService, LevelTestService>();
-builder.Services.AddScoped<ICurrentUserLevel, CurrentUserLevelService>();
+builder.Services.AddScoped<ICurrentUserLevelService, CurrentUserLevelService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IReadingQuestionsService, ReadingQuestionsService>();
 builder.Services.AddScoped<IGrammarQuestions, GrammarQuestionsService>();
+builder.Services.AddScoped<IVocabularyQuestions, VocabularyQuestionsService>();
 
 var app = builder.Build();
 

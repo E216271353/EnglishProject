@@ -17,9 +17,24 @@ namespace Services.Services
             {
                 _repository = repository;
             }
-            public async Task<IEnumerable<VocabularyQuestions>> GetVocabularyQuestions()
+
+
+            public async Task<IEnumerable<VocabularyQuestions>> GetVocabularyQuestionsByUserLevel(string level)
             {
-                return await _repository.GetAllAsync();
+                var allQuestions = await _repository.GetAllAsync();
+
+                var normalizedLevel = level?.ToLower();
+
+                return normalizedLevel switch
+                {
+                    "beginner" => allQuestions.Where(q => q.Level?.ToLower() == "beginner"),
+
+                    "intermediate" => allQuestions.Where(q => q.Level?.ToLower() == "beginner" ||
+                                                               q.Level?.ToLower() == "intermediate"),
+
+                    "advanced" => allQuestions,
+                    _ => Enumerable.Empty<VocabularyQuestions>()
+                };
             }
         }
     

@@ -20,6 +20,7 @@ namespace Services.Services
         }
 
 
+
         public async Task<IEnumerable<ReadingQuestions>> GetReadingQuestionByLevel(string level)
         {
             var allQuestions = await _readingQuestionsRepository.GetAllAsync();
@@ -32,6 +33,12 @@ namespace Services.Services
                 "advanced" => allQuestions, // All levels
                 _ => Enumerable.Empty<ReadingQuestions>()
             };
+        }
+
+        public async Task<IEnumerable<ReadingQuestions>> GetQuestionsByTextId(int readingId)
+        {
+            var allQuestions = await _readingQuestionsRepository.GetAllAsync();
+            return allQuestions.Where(q => q.ReadingId == readingId);
         }
     }
 }

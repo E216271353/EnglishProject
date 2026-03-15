@@ -276,7 +276,7 @@ body,
 .welcome-card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 30px;
-  padding: 50px 40px;
+  padding: 10px;
   box-shadow: 0 30px 80px rgba(102, 126, 234, 0.3);
   border: 3px solid #ffffff;
   width: 100%;
@@ -287,6 +287,7 @@ body,
 }
 
 .logo-container {
+  margin-top: 20px;
   margin-bottom: 20px;
 }
 
@@ -630,6 +631,7 @@ body,
 span {
   direction: ltr;
 }
+
 /* Grammar Game Integration */
 .game-header-wrapper {
   margin-bottom: 20px;
@@ -667,4 +669,12 @@ span {
   background-clip: text;
   margin: 0;
   text-align: center;
+}
+
+
+/* Fullwidth when game is active */
+.welcome-section.fullwidth {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }

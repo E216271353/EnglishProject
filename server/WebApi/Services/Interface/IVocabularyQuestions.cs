@@ -9,6 +9,6 @@ namespace Services.Interface
 {
     public interface IVocabularyQuestions
     {
-        Task<IEnumerable<VocabularyQuestions>> GetVocabularyQuestions();
+        Task<IEnumerable<VocabularyQuestions>> GetVocabularyQuestionsByUserLevel(string level);
     }
 }

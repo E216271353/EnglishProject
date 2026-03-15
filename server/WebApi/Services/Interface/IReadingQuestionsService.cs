@@ -10,5 +10,6 @@ namespace Services.Interface
     public interface IReadingQuestionsService
     {
         Task<IEnumerable<ReadingQuestions>> GetReadingQuestionByLevel(string level);
+        Task<IEnumerable<ReadingQuestions>> GetQuestionsByTextId(int readingId);
     }
 }

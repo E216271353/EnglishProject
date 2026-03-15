@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GrammarGame from '../grammar-game/grammarGame';
+import VocabularyGame from '../vocabulary-game/vocabularyGame';
 import './menu.css';
 
 const Menu = () => {
@@ -9,6 +10,7 @@ const Menu = () => {
   const [username, setUsername] = useState('');
   const [userLevel, setUserLevel] = useState('');
   const [showGrammarGame, setShowGrammarGame] = useState(false);
+  const [showVocabularyGame, setShowVocabularyGame] = useState(false);
 
   useEffect(() => {
     // Get user data from session storage
@@ -65,6 +67,10 @@ const Menu = () => {
   const handleMenuClick = (path: string) => {
     if (path === '/grammar') {
       setShowGrammarGame(true);
+      setShowVocabularyGame(false);
+    } else if (path === '/vocabulary') {
+      setShowVocabularyGame(true);
+      setShowGrammarGame(false);
     } else {
       navigate(path);
     }
@@ -98,7 +104,7 @@ const Menu = () => {
       {/* Main Content Area */}
       <div className="main-content">
         {/* Center Welcome Section */}
-        <div className="welcome-section">
+        <div className={`welcome-section ${(showGrammarGame || showVocabularyGame) ? 'fullwidth' : ''}`}>
           <div className="decorative-shapes">
             <div className="shape shape-1"></div>
             <div className="shape shape-2"></div>
@@ -107,7 +113,7 @@ const Menu = () => {
           </div>
 
           <div className="welcome-card">
-            {!showGrammarGame ? (
+            {!showGrammarGame && !showVocabularyGame ? (
               <>
                 <div className="logo-container">
                   <div className="logo-circle">
@@ -122,25 +128,39 @@ const Menu = () => {
                   <p className="message-text">כל יום של לימוד מקרב אותך למטרה!</p>
                 </div>
               </>
-            ) : (
+            ) : showGrammarGame ? (
               <>
                 <div className="game-header-wrapper">
                   <button 
                     className="back-to-menu-button" 
                     onClick={() => setShowGrammarGame(false)}
                   >
-                    ← Back to Menu
+                    ← חזור לתפריט
                   </button>
-                  <h2 className="game-title">Grammar Game 📚</h2>
+                  <h2 className="game-title">משחק דקדוק 📚</h2>
                 </div>
                 <GrammarGame />
+              </>
+            ) : (
+              <>
+                <div className="game-header-wrapper">
+                  <button 
+                    className="back-to-menu-button" 
+                    onClick={() => setShowVocabularyGame(false)}
+                  >
+                    ← חזור לתפריט
+                  </button>
+                  <h2 className="game-title">משחק אוצר מילים 💬</h2>
+                </div>
+                <VocabularyGame />
               </>
             )}
           </div>
         </div>
 
-        {/* Right Sidebar with Menu Options */}
-        <div className="sidebar-right">
+        {/* Right Sidebar with Menu Options - Hide when game is active */}
+        {!showGrammarGame && !showVocabularyGame && (
+          <div className="sidebar-right">
           <div className="sidebar-header">
             <h2 className="sidebar-title">תפריט</h2>
             <div className="sidebar-decoration">⭐</div>
@@ -165,6 +185,7 @@ const Menu = () => {
             ))}
           </div>
         </div>
+        )}
       </div>
     </div>
   );
