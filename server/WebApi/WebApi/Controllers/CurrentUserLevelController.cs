@@ -10,9 +10,9 @@ namespace WebApi.Controllers
     [Route("api/[controller]")]
     public class CurrentUserLevelController : ControllerBase
     {
-        private readonly ICurrentUserLevel _service;
+        private readonly ICurrentUserLevelService _service;
 
-        public CurrentUserLevelController(ICurrentUserLevel service)
+        public CurrentUserLevelController(ICurrentUserLevelService service)
         {
             _service = service;
         }
