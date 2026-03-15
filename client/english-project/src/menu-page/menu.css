@@ -390,7 +390,6 @@ body,
 
 .sidebar-decoration {
   font-size: 2rem;
-  animation: sparkle 2s ease-in-out infinite;
 }
 
 @keyframes sparkle {
@@ -630,4 +629,42 @@ body,
 
 span {
   direction: ltr;
+}
+/* Grammar Game Integration */
+.game-header-wrapper {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.back-to-menu-button {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  align-self: flex-start;
+}
+
+.back-to-menu-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.game-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  text-align: center;
 }
