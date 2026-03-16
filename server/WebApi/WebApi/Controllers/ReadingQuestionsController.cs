@@ -15,23 +15,18 @@ namespace WebApi.Controllers
             _readingQuestionsService = readingQuestionsService;
         }
 
-        [HttpGet("{level}")]
-        public async Task<ActionResult<IEnumerable<ReadingQuestions>>> GetQuestionsByText(int readingId)
-        {
-            if (!(readingId is > 0))
-            {
-                return BadRequest("text parameter is required.");
-            }
-
-            var questions = await _readingQuestionsService.GetQuestionsByTextId(readingId);
-            return Ok(questions);
-        }
-
         [HttpGet("text/{readingId}")]
         public async Task<ActionResult<IEnumerable<ReadingQuestions>>> GetQuestionsByTextId(int readingId)
         {
             var questions = await _readingQuestionsService.GetQuestionsByTextId(readingId);
             return Ok(questions);
+        }
+
+        [HttpGet("level/{level}")]
+        public async Task<ActionResult<IEnumerable<ReadingTexts>>> GetReadingTextByLevel(string level)
+        {
+            var texts = await _readingQuestionsService.GetReadingTextByLevel(level);
+            return Ok(texts);
         }
     }
 }

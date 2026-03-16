@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GrammarGame from '../grammar-game/grammarGame';
 import VocabularyGame from '../vocabulary-game/vocabularyGame';
+import ReadingGame from '../reading-game/readingGame';
 import './menu.css';
 
 const Menu = () => {
@@ -11,6 +12,7 @@ const Menu = () => {
   const [userLevel, setUserLevel] = useState('');
   const [showGrammarGame, setShowGrammarGame] = useState(false);
   const [showVocabularyGame, setShowVocabularyGame] = useState(false);
+  const [showReadingGame, setShowReadingGame] = useState(false);
 
   useEffect(() => {
     // Get user data from session storage
@@ -68,9 +70,15 @@ const Menu = () => {
     if (path === '/grammar') {
       setShowGrammarGame(true);
       setShowVocabularyGame(false);
+      setShowReadingGame(false);
     } else if (path === '/vocabulary') {
       setShowVocabularyGame(true);
       setShowGrammarGame(false);
+      setShowReadingGame(false);
+    } else if (path === '/reading') {
+      setShowReadingGame(true);
+      setShowGrammarGame(false);
+      setShowVocabularyGame(false);
     } else {
       navigate(path);
     }
@@ -104,7 +112,7 @@ const Menu = () => {
       {/* Main Content Area */}
       <div className="main-content">
         {/* Center Welcome Section */}
-        <div className={`welcome-section ${(showGrammarGame || showVocabularyGame) ? 'fullwidth' : ''}`}>
+        <div className={`welcome-section ${(showGrammarGame || showVocabularyGame || showReadingGame) ? 'fullwidth' : ''}`}>
           <div className="decorative-shapes">
             <div className="shape shape-1"></div>
             <div className="shape shape-2"></div>
@@ -113,7 +121,7 @@ const Menu = () => {
           </div>
 
           <div className="welcome-card">
-            {!showGrammarGame && !showVocabularyGame ? (
+            {!showGrammarGame && !showVocabularyGame && !showReadingGame ? (
               <>
                 <div className="logo-container">
                   <div className="logo-circle">
@@ -141,7 +149,7 @@ const Menu = () => {
                 </div>
                 <GrammarGame />
               </>
-            ) : (
+            ) : showVocabularyGame ? (
               <>
                 <div className="game-header-wrapper">
                   <button 
@@ -154,12 +162,25 @@ const Menu = () => {
                 </div>
                 <VocabularyGame />
               </>
+            ) : (
+              <>
+                <div className="game-header-wrapper">
+                  <button 
+                    className="back-to-menu-button" 
+                    onClick={() => setShowReadingGame(false)}
+                  >
+                    ← חזור לתפריט
+                  </button>
+                  <h2 className="game-title">משחק קריאה 📖</h2>
+                </div>
+                <ReadingGame />
+              </>
             )}
           </div>
         </div>
 
         {/* Right Sidebar with Menu Options - Hide when game is active */}
-        {!showGrammarGame && !showVocabularyGame && (
+        {!showGrammarGame && !showVocabularyGame && !showReadingGame && (
           <div className="sidebar-right">
           <div className="sidebar-header">
             <h2 className="sidebar-title">תפריט</h2>

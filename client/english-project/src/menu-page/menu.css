@@ -371,6 +371,7 @@ body,
   z-index: 10;
   overflow-y: auto;
   direction: rtl;
+  align-items: center;
 }
 
 .sidebar-header {
@@ -634,7 +635,6 @@ span {
 
 /* Grammar Game Integration */
 .game-header-wrapper {
-  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;

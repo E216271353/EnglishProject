@@ -6,7 +6,6 @@ export type ReadingQuestion= {
     optionB: string;       // אפשרות B
     optionC: string;       // אפשרות C
     optionD: string;       // אפשרות D
-    level: string;         // רמת השאלה
     correctAnswer: 'A' | 'B' | 'C' | 'D'; 
 };
 export type ReadingText= {

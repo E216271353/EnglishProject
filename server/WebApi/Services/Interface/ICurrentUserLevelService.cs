@@ -11,5 +11,6 @@ namespace Services.Interface
     {
         Task AddCurrentUserLevel(CurrentUserLevel currentUserLevel);
         Task<CurrentUserLevel> GetCurrentUserLevelByUserId(int UserId);
+        Task<string?> UpdateLevel(int userId, string currentLevel);
     }
 }

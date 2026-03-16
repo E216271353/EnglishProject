@@ -41,36 +41,28 @@ export const addCurrentUserLevel = async (currentUserLevel: CurrentUserLevel): P
         }
     }
 
-   export const updateUserLevel = async (
-        userId: number, 
-        category: 'grammar' | 'vocabulary' | 'reading',
-        percentage: number
-    ): Promise<void> =>  {
-        const newLevel = calculateLevel(percentage);
-        
-        // Get existing level
-        const currentLevel = await getUserLevel(userId);
-        
-        if (!currentLevel) {
-            throw new Error('User level not found. User must complete the level test first.');
+    export const updateByLastAndUpdateLevel = async (
+        userId: number,
+        category: string,
+        newLevel: string
+    ): Promise<CurrentUserLevel> => {
+        if (!category || !newLevel) {
+            throw new Error("Category and newLevel are required.");
         }
 
-        // Update the specific category
-        const updatedLevel: CurrentUserLevel = {
-            ...currentLevel,
-            [`${category}Level`]: newLevel,
-            dateUpdated: new Date()
-        };
-
-        const response = await fetch(`/api/currentuserlevel/${userId}`, {
-            method: 'PUT',
+        const response = await fetch('/api/CurrentUserLevel/updateByLastAndUpdateLevel', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(updatedLevel),
+            body: JSON.stringify({ userId, category, newLevel }),
         });
 
-    if (!response.ok) {
-        throw new Error(`Failed to update ${category} level`);
+        if (!response.ok) {
+            throw new Error('Failed to update user level');
+        }
+
+        return await response.json();
     }
-}
+
+  

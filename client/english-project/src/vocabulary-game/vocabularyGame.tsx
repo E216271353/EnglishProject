@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { vocabularyQuestionsService } from '../services/VocabularyQuestions.service';
-import { getUserLevel } from '../services/currentUserLevel.service';
+import { getUserLevel, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
 import type { VocabularyQuestions } from '../types/vocabularyQuestions';
 import './vocabularyGame.css';
 
@@ -192,7 +192,17 @@ const VocabularyGame = () => {
   // Game completed
   if (completedQuestions === questions.length && !showResult) {
     const percentage = Math.round((score / questions.length) * 100);
-    
+    // Always update user level after completion
+    const userId = sessionStorage.getItem('userId');
+    const levelOrder = ['Beginner', 'Intermediate', 'Advanced'];
+    const currentLevel = questions[questions.length - 1]?.level || 'Beginner';
+    const nextLevelIndex = levelOrder.indexOf(currentLevel) + 1;
+    const nextLevel = levelOrder[nextLevelIndex] || null;
+    if (userId) {
+      const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
+      updateByLastAndUpdateLevel(parseInt(userId), 'vocabulary', newLevel)
+        .catch(err => console.error('Failed to update user level:', err));
+    }
     return (
       <div className="vocabulary-game-container">
         <div className="completion-screen">

@@ -65,6 +65,16 @@ namespace Repository.Repositories
                 throw new Exception("Level test result not found");
             }
         }
+
+        public async Task<LevelTestResults?> GetLatestByUserAndCategoryAsync(int userId, string category)
+        {
+            return await Task.Run(() =>
+                _context.LevelTestResults
+                    .Where(r => r.UserId == userId && r.CalculatedLevel != null && r.CalculatedLevel.ToLower().Contains(category.ToLower()))
+                    .OrderByDescending(r => r.DateTaken)
+                    .FirstOrDefault()
+            );
+        }
     }
 
 }

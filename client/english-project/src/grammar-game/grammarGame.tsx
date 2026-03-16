@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { grammarQuestionsService } from '../services/grammarQuestions.service';
-import { getUserLevel } from '../services/currentUserLevel.service';
+import { getUserLevel, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
 import type { GrammarQuestion } from '../types/grammarQuestion';
 import './grammarGame.css';
 
@@ -144,7 +144,17 @@ const GrammarGame = () => {
   // Game completed
   if (completedQuestions === questions.length && !showResult) {
     const percentage = Math.round((score / questions.length) * 100);
-    
+    // Always update user level after completion
+    const userId = sessionStorage.getItem('userId');
+    const levelOrder = ['Beginner', 'Intermediate', 'Advanced'];
+    const currentLevel = questions[questions.length - 1]?.level || 'Beginner';
+    const nextLevelIndex = levelOrder.indexOf(currentLevel) + 1;
+    const nextLevel = levelOrder[nextLevelIndex] || null;
+    if (userId) {
+      const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
+      updateByLastAndUpdateLevel(parseInt(userId), 'grammar', newLevel)
+        .catch(err => console.error('Failed to update user level:', err));
+    }
     return (
       <div className="grammar-game-container">
         <div className="completion-screen">
