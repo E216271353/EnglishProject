@@ -36,6 +36,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IContext, Database>();
 
 // Register repositories
+builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
 builder.Services.AddScoped<ReadingTextsRepository>();
 builder.Services.AddScoped<ReadingQuestionsRepository>();

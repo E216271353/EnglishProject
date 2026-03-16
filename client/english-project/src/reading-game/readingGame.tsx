@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './readingGame.css';
 import { getQuestionsByTextId, getReadingTextByLevel } from '../services/readingQuestions.service';
 import type { ReadingQuestion,ReadingText } from '../types/readingQuestions';
-import { getUserLevel, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
+import { getCurrentUserLevelByUserId, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
 
 
 const ReadingGame = () => {
@@ -36,7 +36,7 @@ const ReadingGame = () => {
             }
 
             // Get user's current level
-            const userLevelData = await getUserLevel(parseInt(userId));
+            const userLevelData = await getCurrentUserLevelByUserId(parseInt(userId));
             const userLevel = userLevelData?.readingLevel || 'Beginner';
 
             const userLevelIndex = levels.indexOf(userLevel);
@@ -150,19 +150,25 @@ const ReadingGame = () => {
         );
     }
 
+    // Update level when game is completed
+    useEffect(() => {
+        if (showCompletion && texts.length > 0 && answeredCount > 0) {
+            const percentage = Math.round((score / answeredCount) * 100);
+            const userId = sessionStorage.getItem('userId');
+            const currentLevel = texts[texts.length - 1]?.level || 'Beginner';
+            const nextLevelIndex = levels.indexOf(currentLevel) + 1;
+            const nextLevel = levels[nextLevelIndex] || null;
+            
+            if (userId) {
+                const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
+                updateByLastAndUpdateLevel(parseInt(userId), 'reading', newLevel)
+                    .catch(err => console.error('Failed to update user level:', err));
+            }
+        }
+    }, [showCompletion, texts, score, answeredCount, levels]);
+
     if (showCompletion) {
         const percentage = Math.round((score / answeredCount) * 100);
-
-        // Always update user level after completion
-        const userId = sessionStorage.getItem('userId');
-        const currentLevel = texts[texts.length - 1]?.level || 'Beginner';
-        const nextLevelIndex = levels.indexOf(currentLevel) + 1;
-        const nextLevel = levels[nextLevelIndex] || null;
-        if (userId) {
-            const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
-            updateByLastAndUpdateLevel(parseInt(userId), 'reading', newLevel)
-                .catch(err => console.error('Failed to update user level:', err));
-        }
 
         return (
             <div className="reading-game-container">

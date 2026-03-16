@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { vocabularyQuestionsService } from '../services/VocabularyQuestions.service';
-import { getUserLevel, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
+import { getCurrentUserLevelByUserId, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
 import type { VocabularyQuestions } from '../types/vocabularyQuestions';
 import './vocabularyGame.css';
 
@@ -47,7 +47,7 @@ const VocabularyGame = () => {
       }
 
       // Get user's current level
-      const userLevelData = await getUserLevel(parseInt(userId));
+      const userLevelData = await getCurrentUserLevelByUserId(parseInt(userId));
       const userLevel = userLevelData?.vocabularyLevel || 'Beginner';
 
       // Define level order from low to high
@@ -189,20 +189,27 @@ const VocabularyGame = () => {
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
   const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
 
+  // Update level when game is completed
+  useEffect(() => {
+    if (completedQuestions === questions.length && !showResult && questions.length > 0) {
+      const percentage = Math.round((score / questions.length) * 100);
+      const userId = sessionStorage.getItem('userId');
+      const levelOrder = ['Beginner', 'Intermediate', 'Advanced'];
+      const currentLevel = questions[questions.length - 1]?.level || 'Beginner';
+      const nextLevelIndex = levelOrder.indexOf(currentLevel) + 1;
+      const nextLevel = levelOrder[nextLevelIndex] || null;
+      
+      if (userId) {
+        const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
+        updateByLastAndUpdateLevel(parseInt(userId), 'vocabulary', newLevel)
+          .catch(err => console.error('Failed to update user level:', err));
+      }
+    }
+  }, [completedQuestions, showResult, questions, score]);
+
   // Game completed
   if (completedQuestions === questions.length && !showResult) {
     const percentage = Math.round((score / questions.length) * 100);
-    // Always update user level after completion
-    const userId = sessionStorage.getItem('userId');
-    const levelOrder = ['Beginner', 'Intermediate', 'Advanced'];
-    const currentLevel = questions[questions.length - 1]?.level || 'Beginner';
-    const nextLevelIndex = levelOrder.indexOf(currentLevel) + 1;
-    const nextLevel = levelOrder[nextLevelIndex] || null;
-    if (userId) {
-      const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
-      updateByLastAndUpdateLevel(parseInt(userId), 'vocabulary', newLevel)
-        .catch(err => console.error('Failed to update user level:', err));
-    }
     return (
       <div className="vocabulary-game-container">
         <div className="completion-screen">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { grammarQuestionsService } from '../services/grammarQuestions.service';
-import { getUserLevel, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
+import { getCurrentUserLevelByUserId, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
 import type { GrammarQuestion } from '../types/grammarQuestion';
 import './grammarGame.css';
 
@@ -33,7 +33,7 @@ const GrammarGame = () => {
       }
 
       // Get user's current level
-      const userLevelData = await getUserLevel(parseInt(userId));
+      const userLevelData = await getCurrentUserLevelByUserId(parseInt(userId));
       const userLevel = userLevelData?.grammarLevel || 'Beginner';
 
       // Define level order from low to high
@@ -141,20 +141,27 @@ const GrammarGame = () => {
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
   const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
 
+  // Update level when game is completed
+  useEffect(() => {
+    if (completedQuestions === questions.length && !showResult && questions.length > 0) {
+      const percentage = Math.round((score / questions.length) * 100);
+      const userId = sessionStorage.getItem('userId');
+      const levelOrder = ['Beginner', 'Intermediate', 'Advanced'];
+      const currentLevel = questions[questions.length - 1]?.level || 'Beginner';
+      const nextLevelIndex = levelOrder.indexOf(currentLevel) + 1;
+      const nextLevel = levelOrder[nextLevelIndex] || null;
+      
+      if (userId) {
+        const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
+        updateByLastAndUpdateLevel(parseInt(userId), 'grammar', newLevel)
+          .catch(err => console.error('Failed to update user level:', err));
+      }
+    }
+  }, [completedQuestions, showResult, questions, score]);
+
   // Game completed
   if (completedQuestions === questions.length && !showResult) {
     const percentage = Math.round((score / questions.length) * 100);
-    // Always update user level after completion
-    const userId = sessionStorage.getItem('userId');
-    const levelOrder = ['Beginner', 'Intermediate', 'Advanced'];
-    const currentLevel = questions[questions.length - 1]?.level || 'Beginner';
-    const nextLevelIndex = levelOrder.indexOf(currentLevel) + 1;
-    const nextLevel = levelOrder[nextLevelIndex] || null;
-    if (userId) {
-      const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
-      updateByLastAndUpdateLevel(parseInt(userId), 'grammar', newLevel)
-        .catch(err => console.error('Failed to update user level:', err));
-    }
     return (
       <div className="grammar-game-container">
         <div className="completion-screen">

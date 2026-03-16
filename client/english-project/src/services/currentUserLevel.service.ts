@@ -1,68 +1,38 @@
-import type { CurrentUserLevel, LevelType } from '../types/currentUserLevel';
-import { calculateLevel } from '../types/currentUserLevel';
+import type { CurrentUserLevel } from '../types/currentUserLevel';
+import axios from 'axios';
 
 
 
 
-export const addCurrentUserLevel = async (currentUserLevel: CurrentUserLevel): Promise<void> => {
-    if (!currentUserLevel) {
-        throw new Error("Current user level cannot be null.");
+
+export const addUserLevel = async (currentUserLevel: CurrentUserLevel): Promise<void> => {
+    await axios.post(`api/CurrentUserLevel/addUserLevel`, currentUserLevel);
+};
+
+export const getCurrentUserLevelByUserId = async (userId: number): Promise<CurrentUserLevel> => {
+    const response = await axios.get(`api/CurrentUserLevel/${userId}`);
+    return response.data;
+};
+
+export const updateByLastAndUpdateLevel = async (
+    userId: number,
+    category: string,
+    newLevel: string
+): Promise<any> => {
+    if (!category || !newLevel) {
+        throw new Error("Category and newLevel are required.");
     }
 
-    const response = await fetch('/api/CurrentUserLevel/addUserLevel', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(currentUserLevel),
+    const params = new URLSearchParams({
+        userId: userId.toString(),
+        category,
+        newLevel
     });
-
+    const response = await fetch(`api/CurrentUserLevel/updateByLastAndUpdateLevel?${params.toString()}`, {
+        method: 'POST'
+    });
     if (!response.ok) {
-        throw new Error('Failed to add current user level');
+        throw new Error('Failed to update user level');
     }
-}
-
-    export const getUserLevel = async (userId: number): Promise<CurrentUserLevel | null> =>  {
-        try {
-            const response = await fetch(`/api/currentuserlevel/${userId}`);
-            
-            if (response.status === 404) {
-                return null;
-            }
-            
-            if (!response.ok) {
-                throw new Error('Failed to get user level');
-            }
-            
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching user level:', error);
-            throw error;
-        }
-    }
-
-    export const updateByLastAndUpdateLevel = async (
-        userId: number,
-        category: string,
-        newLevel: string
-    ): Promise<CurrentUserLevel> => {
-        if (!category || !newLevel) {
-            throw new Error("Category and newLevel are required.");
-        }
-
-        const response = await fetch('/api/CurrentUserLevel/updateByLastAndUpdateLevel', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ userId, category, newLevel }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to update user level');
-        }
-
-        return await response.json();
-    }
-
-  
+    return await response.json();
+};
