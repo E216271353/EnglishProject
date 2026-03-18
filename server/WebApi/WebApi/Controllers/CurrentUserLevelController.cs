@@ -56,6 +56,15 @@ namespace WebApi.Controllers
             return Ok(result);
         }
 
-        
+        [HttpGet("userprogress/{userId}")]
+        public async Task<IActionResult> GetUserProgress(int userId)
+        {
+            var userProgress = await _service.GetUserProgress(userId);
+            if (userProgress == null || !userProgress.Any())
+            {
+                return NotFound();
+            }
+            return Ok(userProgress);
+        }
     }
 }

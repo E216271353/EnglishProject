@@ -44,3 +44,8 @@ export const updateByLastAndUpdateLevel = async (
         return await response.text();
     }
 };
+
+export const getUserProgress = async (userId: number): Promise<any> => {
+    const response = await axios.get(`api/CurrentUserLevel/userprogress/${userId}`);
+    return response.data;
+};
