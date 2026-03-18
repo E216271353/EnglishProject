@@ -114,6 +114,12 @@ namespace Services.Services
             return await UpdateLevel(userId, currentLevel);
         }
 
-
+        public async Task<IEnumerable<CurrentUserLevel>> GetUserProgress(int userId)
+        {
+            var allRows = await _repository.GetAllAsync();
+            return allRows.Where(x => x.UserId == userId)
+                          .OrderBy(x => x.DateUpdated)
+                          .ToList();
+        }
     }
 }

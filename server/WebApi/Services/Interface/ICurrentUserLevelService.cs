@@ -12,5 +12,6 @@ namespace Services.Interface
         Task AddCurrentUserLevel(CurrentUserLevel currentUserLevel);
         Task<CurrentUserLevel> GetCurrentUserLevelByUserId(int UserId);
         Task<string?> UpdateByLastAndUpdateLevel(int userId, string category, string newLevel);
+        Task<IEnumerable<CurrentUserLevel>> GetUserProgress(int userId);
     }
 }
