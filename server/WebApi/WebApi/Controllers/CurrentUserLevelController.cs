@@ -39,5 +39,32 @@ namespace WebApi.Controllers
             }
             return Ok(currentUserLevel);
         }
+
+        [HttpPost("updateByLastAndUpdateLevel")]
+        public async Task<IActionResult> UpdateByLastAndUpdateLevel(int userId, string category, string newLevel)
+        {
+            if (string.IsNullOrEmpty(category) || string.IsNullOrEmpty(newLevel))
+            {
+                return BadRequest("Request cannot be null.");
+            }
+
+            var result = await _service.UpdateByLastAndUpdateLevel(
+                userId,
+                category,
+                newLevel
+            );
+            return Ok(result);
+        }
+
+        [HttpGet("userprogress/{userId}")]
+        public async Task<IActionResult> GetUserProgress(int userId)
+        {
+            var userProgress = await _service.GetUserProgress(userId);
+            if (userProgress == null || !userProgress.Any())
+            {
+                return NotFound();
+            }
+            return Ok(userProgress);
+        }
     }
 }

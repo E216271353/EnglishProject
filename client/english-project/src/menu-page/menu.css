@@ -184,6 +184,7 @@ body,
   font-weight: 700;
   font-size: 1rem;
   box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+  direction: rtl;
 }
 
 /* Main Content Area */
@@ -194,6 +195,7 @@ body,
   gap: 20px;
   overflow: hidden;
   justify-content: flex-end;
+      height: 100%;
 }
 
 /* Welcome Section - Center/Left */
@@ -286,10 +288,6 @@ body,
   direction: rtl;
 }
 
-.logo-container {
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
 
 .logo-circle {
   width: 100px;
@@ -560,6 +558,7 @@ body,
 @media (max-width: 968px) {
   .main-content {
     flex-direction: column;
+        height: 100%;
   }
 
   .sidebar-right {

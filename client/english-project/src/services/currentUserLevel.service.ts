@@ -23,21 +23,28 @@ export const getUserLevel = async (userId: number): Promise<CurrentUserLevel | n
     }
 }
 
-export const updateByLastAndUpdateLevel = async (
-    userId: number,
-    category: string,
-    newLevel: string
-): Promise<CurrentUserLevel> => {
-    if (!category || !newLevel) {
-        throw new Error("Category and newLevel are required.");
+    export const updateByLastAndUpdateLevel = async (
+        userId: number,
+        category: string,
+        newLevel: string
+    ): Promise<CurrentUserLevel> => {
+        if (!category || !newLevel) {
+            throw new Error("Category and newLevel are required.");
+        }
+
+        const response = await fetch('/api/CurrentUserLevel/updateByLastAndUpdateLevel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId, category, newLevel }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update user level');
+        }
+
+        return await response.json();
     }
 
-    // שולחים אובייקט פשוט, Axios כבר יהפוך אותו ל-JSON (body)
-    const response = await api.post<CurrentUserLevel>('/CurrentUserLevel/updateByLastAndUpdateLevel', { 
-        userId, 
-        category, 
-        newLevel 
-    });
-
-    return response.data;
-}
+  

@@ -24,8 +24,7 @@ namespace Services.Services
             return users.FirstOrDefault(x => x.Email == user.Email && x.Password == user.Password);
         }
 
-        public async Task<User> SignUp(UserSignUp userSignUp)
-        
+        public async Task<User> SignUp(UserSignUp userSignUp)        
        {
             var users = await _repository.GetAll();
             var existingUser = users.FirstOrDefault(x => x.Email == userSignUp.Email);
@@ -46,5 +45,7 @@ namespace Services.Services
             await _repository.AddItem(newUser);
             return newUser;
         }
+
+
     }
 }

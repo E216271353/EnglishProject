@@ -5,16 +5,16 @@ using Repository.Interfaces;
 using Repository.Repositories;
 using Services.Interface;
 using Services.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer; // щешд згщд
-using Microsoft.IdentityModel.Tokens; // щешд згщд
-using System.Text; // щешд згщд
+using Microsoft.AspNetCore.Authentication.JwtBearer; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+using Microsoft.IdentityModel.Tokens; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+using System.Text; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<Database>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// --- дъзмд: десфъ айоеъ JWT ---
+// --- пїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ JWT ---
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -26,7 +26,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false
         };
     });
-// --- сйен: десфъ айоеъ JWT ---
+// --- пїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ JWT ---
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -44,7 +44,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<IContext, Database>();
 
-// Repositories
+// Register repositories
+builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
 builder.Services.AddScoped<ReadingTextsRepository>();
 builder.Services.AddScoped<ReadingQuestionsRepository>();
@@ -64,8 +65,8 @@ builder.Services.AddScoped<IReadingService, ReadingService>();
 builder.Services.AddScoped<IGrammarQuestions, GrammarQuestionsService>();
 builder.Services.AddScoped<IVocabularyQuestions, VocabularyQuestionsService>();
 
-// шйщен щйшеъ диечрйн дзгщ щйцшъ бщмб дчегн
-builder.Services.AddScoped<ITokenService, TokenService>(); // щешд згщд
+// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+builder.Services.AddScoped<ITokenService, TokenService>(); // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 
 var app = builder.Build();
 
@@ -78,8 +79,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
-// --- зщеб оаег: UseAuthentication зййб мбеа мфрй UseAuthorization ---
-app.UseAuthentication(); // щешд згщд
+// --- пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ: UseAuthentication пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ UseAuthorization ---
+app.UseAuthentication(); // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 app.UseAuthorization();
 
 app.MapControllers();
