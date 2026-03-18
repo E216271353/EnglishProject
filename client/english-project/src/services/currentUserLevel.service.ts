@@ -10,7 +10,7 @@ export const addUserLevel = async (currentUserLevel: CurrentUserLevel): Promise<
 };
 
 export const getCurrentUserLevelByUserId = async (userId: number): Promise<CurrentUserLevel> => {
-    const response = await axios.get(`api/CurrentUserLevel/${userId}`);
+    const response = await axios.get(`api/CurrentUserLevel/currentuserlevel/${userId}`);
     return response.data;
 };
 
@@ -34,5 +34,13 @@ export const updateByLastAndUpdateLevel = async (
     if (!response.ok) {
         throw new Error('Failed to update user level');
     }
-    return await response.json();
+    
+    // Check if response has content and proper content-type
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+        return await response.json();
+    } else {
+        // Backend returns plain text, just return the text
+        return await response.text();
+    }
 };

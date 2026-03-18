@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useUserLevel } from '../context/UserLevelContext';
 import { vocabularyQuestionsService } from '../services/VocabularyQuestions.service';
 import { getCurrentUserLevelByUserId, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
 import type { VocabularyQuestions } from '../types/vocabularyQuestions';
@@ -29,12 +30,40 @@ const VocabularyGame = () => {
   const [error, setError] = useState('');
   const [completedQuestions, setCompletedQuestions] = useState(0);
   const [answerOptions, setAnswerOptions] = useState<string[]>([]);
+  const hasLoadedRef = useRef(false);
+  const { updateVocabularyLevel } = useUserLevel();
 
   useEffect(() => {
-    loadQuestions();
+    if (!hasLoadedRef.current) {
+      hasLoadedRef.current = true;
+      loadQuestions();
+    }
   }, []);
 
+  // Update level when game is completed
+  useEffect(() => {
+    if (completedQuestions === questions.length && !showResult && questions.length > 0) {
+      const percentage = Math.round((score / questions.length) * 100);
+      const userId = sessionStorage.getItem('userId');
+      const levelOrder = ['Beginner', 'Intermediate', 'Advanced'];
+      const currentLevel = questions[questions.length - 1]?.level || 'Beginner';
+      const nextLevelIndex = levelOrder.indexOf(currentLevel) + 1;
+      const nextLevel = levelOrder[nextLevelIndex] || null;
+      
+      if (userId) {
+        const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
+        updateByLastAndUpdateLevel(parseInt(userId), 'vocabulary', newLevel)
+          .then(() => {
+            // Update context
+            updateVocabularyLevel(newLevel);
+          })
+          .catch(err => console.error('Failed to update user level:', err));
+      }
+    }
+  }, [completedQuestions, showResult, questions, score, updateVocabularyLevel]);
+
   const loadQuestions = async () => {
+    console.log('loadQuestions called, current questions count:', questions.length);
     try {
       setLoading(true);
       setError('');
@@ -43,36 +72,30 @@ const VocabularyGame = () => {
       const userId = sessionStorage.getItem('userId');
       if (!userId) {
         setError('משתמש לא נמצא. אנא התחבר שוב.');
+        setLoading(false);
         return;
       }
 
-      // Get user's current level
-      const userLevelData = await getCurrentUserLevelByUserId(parseInt(userId));
-      const userLevel = userLevelData?.vocabularyLevel || 'Beginner';
-
-      // Define level order from low to high
-      const levelOrder = ['Beginner', 'Intermediate', 'Advanced'];
-      const currentLevelIndex = levelOrder.indexOf(userLevel);
-      
-      // Fetch questions for current level and all lower levels
-      const allQuestions: VocabularyQuestions[] = [];
-      for (let i = 0; i <= currentLevelIndex; i++) {
-        const levelQuestions = await vocabularyQuestionsService.getQuestionsByLevel(levelOrder[i]);
-        allQuestions.push(...levelQuestions);
+      // Get user's current level with error handling
+      let userLevel = 'Beginner';
+      try {
+        const userLevelData = await getCurrentUserLevelByUserId(parseInt(userId));
+        userLevel = userLevelData?.vocabularyLevel || 'Beginner';
+      } catch (levelError) {
+        console.warn('Could not fetch user level, defaulting to Beginner:', levelError);
+        // Continue with default level
       }
 
-      // Sort questions by level (Beginner first, then Intermediate, then Advanced)
-      const sortedQuestions = allQuestions.sort((a, b) => {
-        const levelA = levelOrder.indexOf(a.level);
-        const levelB = levelOrder.indexOf(b.level);
-        return levelA - levelB;
-      });
+      // Fetch questions for user's current level (backend handles returning all appropriate questions)
+      const allQuestions = await vocabularyQuestionsService.getQuestionsByLevel(userLevel);
+      console.log(`Fetched ${allQuestions.length} questions for level ${userLevel}`);
 
-      setQuestions(sortedQuestions);
-      if (sortedQuestions.length > 0) {
-        console.log('First question:', sortedQuestions[0]);
-        console.log('CorrectMatch:', sortedQuestions[0].correctMatch);
-        generateAnswerOptions(sortedQuestions, 0);
+      setQuestions(allQuestions);
+      console.log(`Questions set to state: ${allQuestions.length}`);
+      if (allQuestions.length > 0) {
+        console.log('First question:', allQuestions[0]);
+        console.log('CorrectMatch:', allQuestions[0].correctMatch);
+        generateAnswerOptions(allQuestions, 0);
       }
       setLoading(false);
     } catch (err) {
@@ -188,24 +211,6 @@ const VocabularyGame = () => {
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
   const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
-
-  // Update level when game is completed
-  useEffect(() => {
-    if (completedQuestions === questions.length && !showResult && questions.length > 0) {
-      const percentage = Math.round((score / questions.length) * 100);
-      const userId = sessionStorage.getItem('userId');
-      const levelOrder = ['Beginner', 'Intermediate', 'Advanced'];
-      const currentLevel = questions[questions.length - 1]?.level || 'Beginner';
-      const nextLevelIndex = levelOrder.indexOf(currentLevel) + 1;
-      const nextLevel = levelOrder[nextLevelIndex] || null;
-      
-      if (userId) {
-        const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
-        updateByLastAndUpdateLevel(parseInt(userId), 'vocabulary', newLevel)
-          .catch(err => console.error('Failed to update user level:', err));
-      }
-    }
-  }, [completedQuestions, showResult, questions, score]);
 
   // Game completed
   if (completedQuestions === questions.length && !showResult) {

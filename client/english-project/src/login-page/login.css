@@ -319,6 +319,7 @@ html, body, #root {
   pointer-events: none;
   overflow: hidden;
   border-radius: 32px;
+  z-index: 0;
 }
 
 .shape {
@@ -384,6 +385,8 @@ html, body, #root {
   display: flex;
   justify-content: center;
   margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 2;
 }
 
 .logo-circle {
@@ -440,6 +443,8 @@ html, body, #root {
 .auth-header {
   text-align: center;
   margin-bottom: 1rem;
+  position: relative;
+  z-index: 2;
 }
 
 .auth-title {
@@ -495,6 +500,8 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+  position: relative;
+  z-index: 2;
 }
 
 .form-group {

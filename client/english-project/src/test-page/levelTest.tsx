@@ -4,7 +4,7 @@ import './levelTest.css';
 import { getLevelTestQuestions, submitLevelTest } from '../services/levelTest.service';
 import type { LevelTestQuestion, UserAnswer, LevelTestResult } from '../types/levelTest';
 import { calculateLevel, type CurrentUserLevel } from '../types/currentUserLevel';
-import { addCurrentUserLevel } from '../services/currentUserLevel.service';
+import { addUserLevel } from '../services/currentUserLevel.service';
 
 const LevelTest = () => {
   const navigate = useNavigate();
@@ -143,7 +143,7 @@ const LevelTest = () => {
 
     try {
       await submitLevelTest(result);
-      await addCurrentUserLevel(userLevel);
+      await addUserLevel(userLevel);
 
       
       setTestResult(result);
@@ -312,15 +312,16 @@ const LevelTest = () => {
 
         <div className="progress-section">
           <div className="progress-info">
-            <span className="progress-text">
-              Question {currentQuestionIndex + 1} of {questions.length}
-            </span>
+            
             <span className="progress-emoji">
               {currentQuestionIndex < questions.length / 3 ? '🌱' : 
                currentQuestionIndex < (questions.length * 2) / 3 ? '🌿' : '🌳'}
             </span>
           </div>
           <div className="progress-bar">
+            <span className="progress-text">
+              Question {currentQuestionIndex + 1} of {questions.length}
+            </span>
             <div 
               className="progress-fill" 
               style={{ width: `${progress}%` }}

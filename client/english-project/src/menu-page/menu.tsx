@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUserLevel } from '../context/UserLevelContext';
+import { getCurrentUserLevelByUserId } from '../services/currentUserLevel.service';
 import GrammarGame from '../grammar-game/grammarGame';
 import VocabularyGame from '../vocabulary-game/vocabularyGame';
 import ReadingGame from '../reading-game/readingGame';
@@ -7,9 +9,9 @@ import './menu.css';
 
 const Menu = () => {
   const navigate = useNavigate();
+  const { userLevels, setUserLevels } = useUserLevel();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [username, setUsername] = useState('');
-  const [userLevel, setUserLevel] = useState('');
   const [showGrammarGame, setShowGrammarGame] = useState(false);
   const [showVocabularyGame, setShowVocabularyGame] = useState(false);
   const [showReadingGame, setShowReadingGame] = useState(false);
@@ -17,15 +19,27 @@ const Menu = () => {
   useEffect(() => {
     // Get user data from session storage
     const storedUsername = sessionStorage.getItem('username');
+    const userId = sessionStorage.getItem('userId');
     
     if (storedUsername) {
       setUsername(storedUsername);
     }
     
-    // You can fetch the user level from the API using the userId
-    // For now, setting a default
-    setUserLevel('Beginner');
-  }, []);
+    // Fetch user levels from API
+    if (userId) {
+      getCurrentUserLevelByUserId(parseInt(userId))
+        .then(levels => {
+          setUserLevels({
+            grammarLevel: levels.grammarLevel,
+            vocabularyLevel: levels.vocabularyLevel,
+            readingLevel: levels.readingLevel
+          });
+        })
+        .catch(err => {
+          console.warn('Could not fetch user levels:', err);
+        });
+    }
+  }, [setUserLevels]);
 
   const menuItems = [
     {
@@ -103,8 +117,10 @@ const Menu = () => {
             <span className="username">{username || 'Student'}</span>
           </div>
           <div className="user-level">
-            <span className="level-label">:הרמה שלך</span>
-            <span className="level-badge">{userLevel}</span>
+            <span className="level-label">:רמות</span>
+            <span className="level-badge">דקדוק: {userLevels.grammarLevel}</span>
+            <span className="level-badge">אוצר מילים: {userLevels.vocabularyLevel}</span>
+            <span className="level-badge">קריאה: {userLevels.readingLevel}</span>
           </div>
         </div>
       </div>

@@ -51,7 +51,8 @@ namespace Repository.Repositories
 
         public async Task<CurrentUserLevel> GetByUserId(int UserId)
         {
-            return await _context.CurrentUserLevels.FindAsync(UserId);
+            return await _context.CurrentUserLevels
+                .FirstOrDefaultAsync(x => x.UserId == UserId);
         }
 
         public async Task UpdateItemAsync(int id, CurrentUserLevel item)

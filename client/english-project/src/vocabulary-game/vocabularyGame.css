@@ -43,8 +43,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-text {
@@ -127,8 +132,17 @@
 }
 
 @keyframes twinkle {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.8; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
 }
 
 .score-text {
@@ -169,6 +183,7 @@
   z-index: 2;
   white-space: nowrap;
   direction: ltr;
+  margin: 0;
 }
 
 /* Question Card */
@@ -194,10 +209,10 @@
 .word-display {
   background: linear-gradient(135deg, rgba(79, 172, 254, 0.08), rgba(0, 242, 254, 0.08));
   border-left: 4px solid #4facfe;
-  padding: 20px;
   border-radius: 12px;
   margin-bottom: 20px;
   text-align: center;
+  padding: 0.2rem 20px;
 }
 
 .word-label {
@@ -208,7 +223,7 @@
 }
 
 .word-text {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 800;
   color: #2d3748;
   margin: 0;
@@ -333,6 +348,7 @@
     opacity: 0;
     transform: scale(0.8);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
@@ -356,8 +372,15 @@
 }
 
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
 }
 
 .result-title {
@@ -441,8 +464,15 @@
 }
 
 @keyframes celebrate {
-  0%, 100% { transform: rotate(-10deg); }
-  50% { transform: rotate(10deg); }
+
+  0%,
+  100% {
+    transform: rotate(-10deg);
+  }
+
+  50% {
+    transform: rotate(10deg);
+  }
 }
 
 .completion-title {
