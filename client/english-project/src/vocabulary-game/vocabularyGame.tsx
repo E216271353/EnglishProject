@@ -42,6 +42,13 @@ const VocabularyGame = () => {
 
   // Update level when game is completed
   useEffect(() => {
+    console.log('Level update useEffect triggered:', { 
+      completedQuestions, 
+      questionsLength: questions.length, 
+      showResult, 
+      condition: completedQuestions === questions.length && !showResult && questions.length > 0 
+    });
+    
     if (completedQuestions === questions.length && !showResult && questions.length > 0) {
       const percentage = Math.round((score / questions.length) * 100);
       const userId = sessionStorage.getItem('userId');
@@ -50,10 +57,15 @@ const VocabularyGame = () => {
       const nextLevelIndex = levelOrder.indexOf(currentLevel) + 1;
       const nextLevel = levelOrder[nextLevelIndex] || null;
       
+      console.log('Updating vocabulary level:', { percentage, currentLevel, nextLevel });
+      
       if (userId) {
         const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
+        console.log('Final level to update:', newLevel);
+        
         updateByLastAndUpdateLevel(parseInt(userId), 'vocabulary', newLevel)
           .then(() => {
+            console.log('Backend update successful, updating context with level:', newLevel);
             updateVocabularyLevel(newLevel);
           })
           .catch(err => console.error('Failed to update user level:', err));
