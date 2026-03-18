@@ -4,11 +4,11 @@ import './login.css';
 import { login, signUp } from '../services/user.service';
 import type { User, UserLogin } from '../types/user';
 
-
 const Login = () => {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({}); // State חדש לשגיאות
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -16,25 +16,50 @@ const Login = () => {
     fullName: ''
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  // פונקציית ולידציה - בודקת את הנתונים לפני השליחה
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    const emailRegex = /\S+@\S+\.\S+/;
+
+    if (!formData.email) {
+      newErrors.email = 'חובה להזין כתובת אימייל';
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'פורמט האימייל אינו תקין';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'חובה להזין סיסמה';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'הסיסמה חייבת להכיל לפחות 6 תווים';
+    }
+
+    if (!isLogin) {
+      if (!formData.fullName) {
+        newErrors.fullName = 'חובה להזין שם מלא';
+      }
+      if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'הסיסמאות אינן תואמות';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isLogin) {
-      console.log('Login:', { email: formData.email, password: formData.password });
-    } else {
-      console.log('Sign Up:', formData);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+    // מנקה את השגיאה של השדה הספציפי כשהמשתמש מתחיל להקליד
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: '' });
     }
   };
 
   return (
     <div className={`auth-container ${isDarkMode ? 'dark' : 'light'}`}>
-      {/* Theme Toggle Button */}
       <button
         className="theme-toggle"
         onClick={() => setIsDarkMode(!isDarkMode)}
@@ -63,24 +88,22 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Tab Switcher */}
         <div className="auth-tabs">
           <button
             className={`tab ${isLogin ? 'active' : ''}`}
-            onClick={() => setIsLogin(true)}
+            onClick={() => { setIsLogin(true); setErrors({}); }}
           >
             Login
           </button>
           <button
             className={`tab ${!isLogin ? 'active' : ''}`}
-            onClick={() => setIsLogin(false)}
+            onClick={() => { setIsLogin(false); setErrors({}); }}
           >
             Sign Up
           </button>
         </div>
 
-        {/* Form */}
-        <form className="auth-form" onSubmit={handleSubmit}>
+        <form className="auth-form" onSubmit={(e) => e.preventDefault()}>
           {!isLogin && (
             <div className="form-group">
               <label htmlFor="fullName">Full Name</label>
@@ -91,8 +114,9 @@ const Login = () => {
                 placeholder="Enter your full name"
                 value={formData.fullName}
                 onChange={handleInputChange}
-                required={!isLogin}
+                className={errors.fullName ? 'input-error' : ''}
               />
+              {errors.fullName && <span className="error-text">{errors.fullName}</span>}
             </div>
           )}
 
@@ -105,8 +129,9 @@ const Login = () => {
               placeholder="Enter your email"
               value={formData.email}
               onChange={handleInputChange}
-              required
+              className={errors.email ? 'input-error' : ''}
             />
+            {errors.email && <span className="error-text">{errors.email}</span>}
           </div>
 
           <div className="form-group">
@@ -118,8 +143,9 @@ const Login = () => {
               placeholder="Enter your password"
               value={formData.password}
               onChange={handleInputChange}
-              required
+              className={errors.password ? 'input-error' : ''}
             />
+            {errors.password && <span className="error-text">{errors.password}</span>}
           </div>
 
           {!isLogin && (
@@ -132,8 +158,9 @@ const Login = () => {
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
-                required={!isLogin}
+                className={errors.confirmPassword ? 'input-error' : ''}
               />
+              {errors.confirmPassword && <span className="error-text">{errors.confirmPassword}</span>}
             </div>
           )}
 
@@ -152,30 +179,57 @@ const Login = () => {
             className="submit-btn"
             onClick={async (e) => {
               e.preventDefault();
-              try {
-                if (isLogin) {
-                  const userLogin: UserLogin = { email: formData.email, password: formData.password };
-                  const user = await login(userLogin);
-                  sessionStorage.setItem('userId', user.id.toString());
-                  sessionStorage.setItem('username', user.username);
-                  navigate('/menu');
-                } else {
-                  const newUser: Partial<User> = { email: formData.email, password: formData.password, username: formData.fullName };
-                  const user = await signUp(newUser as User);
-                  sessionStorage.setItem('userId', user.id.toString());
-                  sessionStorage.setItem('username', user.username);
-                  navigate('/levelTest');
-                }
-              } catch (error) {
-                console.error(error);
-              }
+              if (!validate()) return; // אם הוולידציה נכשלה - לא שולח לשרת
+
+try {
+  if (isLogin) {
+    const userLogin = { 
+      email: formData.email, 
+      password: formData.password 
+    };
+    
+    // קוראים לשרת ומקבלים את האובייקט המלא
+    const response: any = await login(userLogin);
+    
+    // בדיקה: אם השרת החזיר אובייקט עם שדה Token (באות גדולה או קטנה)
+    const token = response.token || response.Token;
+    const userData = response.user || response.User;
+
+    if (token && userData) {
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('userId', userData.id.toString());
+      sessionStorage.setItem('username', userData.username);
+      navigate('/menu');
+    }
+  } else {
+    const response: any = await signUp({ 
+  username: formData.fullName, 
+  email: formData.email, 
+  password: formData.password 
+} as any);
+    const token = response.token || response.Token;
+    const userData = response.user || response.User;
+
+    if (token && userData) {
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('userId', userData.id.toString());
+      sessionStorage.setItem('username', userData.username);
+      navigate('/levelTest');
+    }
+  }
+} catch (error: any) {
+  console.error("פרטי השגיאה:", error);
+  // אם יש שגיאה ספציפית מהשרת, נציג אותה
+  const errorMessage = error.response?.data || "חלה שגיאה בהתחברות";
+  setErrors({ server: typeof errorMessage === 'string' ? errorMessage : "נתונים לא תקינים" });
+}
             }}
           >
             {isLogin ? 'Login' : 'Sign Up'}
           </button>
+          {errors.server && <p className="error-text server-error" style={{textAlign: 'center'}}>{errors.server}</p>}
         </form>
 
-        {/* Fun Facts Section */}
         <div className="fun-fact">
           <div className="divider">
             <span>✨ Did you know? ✨</span>

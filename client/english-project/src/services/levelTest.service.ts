@@ -1,12 +1,14 @@
-import axios from 'axios';
+import api from './api'; // ייבוא ה-Axios המרכזי עם ה-Interceptor
 import type { LevelTestQuestion, LevelTestResult } from '../types/levelTest';
 
 export const getLevelTestQuestions = async (): Promise<LevelTestQuestion[]> => {
-    const response = await axios.get<LevelTestQuestion[]>(`/api/LevelTest/testQuestions`);
+    // הוספת ה-Token מתבצעת אוטומטית עכשיו!
+    const response = await api.get<LevelTestQuestion[]>(`/LevelTest/testQuestions`);
     return response.data;
 };
 
 export const submitLevelTest = async (result: LevelTestResult): Promise<LevelTestResult> => {
-    const response = await axios.post<LevelTestResult>(`/api/LevelTest/addResult`, result);
+    // Axios יהפוך את ה-result ל-JSON לבד
+    const response = await api.post<LevelTestResult>(`/LevelTest/addResult`, result);
     return response.data;
 };

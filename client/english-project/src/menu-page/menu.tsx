@@ -65,7 +65,12 @@ const Menu = () => {
       path: '/progress'
     }
   ];
-
+const handleLogout = () => {
+  // מוחק את הטוקן ואת כל מה שמרנו
+  sessionStorage.clear(); 
+  // מחזיר לדף ההתחברות
+  navigate('/login');
+};
   const handleMenuClick = (path: string) => {
     if (path === '/grammar') {
       setShowGrammarGame(true);
@@ -101,6 +106,7 @@ const Menu = () => {
           <div className="greeting">
             <span className="hello-text">!שלום</span>
             <span className="username">{username || 'Student'}</span>
+            <button onClick={handleLogout}>Logout</button>
           </div>
           <div className="user-level">
             <span className="level-label">:הרמה שלך</span>

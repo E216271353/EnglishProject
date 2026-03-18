@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from './api'; // ייבוא ה-Axios עם ה-Interceptor
 import type { VocabularyQuestions } from '../types/vocabularyQuestions';
 
 export const vocabularyQuestionsService = {
@@ -6,7 +6,11 @@ export const vocabularyQuestionsService = {
         if (!level || level.trim() === '') {
             throw new Error('Level parameter is required.');
         }
-        const response = await axios.get<VocabularyQuestions[]>(`api/VocabularyQuestions/${level}`);
+
+        // שימוש ב-api המרכזי שמוסיף את ה-Token אוטומטית
+        // שימי לב שהסרנו את ה-"api/" מההתחלה
+        const response = await api.get<VocabularyQuestions[]>(`/VocabularyQuestions/${level}`);
+        
         return response.data;
     }
 };

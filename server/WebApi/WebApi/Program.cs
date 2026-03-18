@@ -5,23 +5,33 @@ using Repository.Interfaces;
 using Repository.Repositories;
 using Services.Interface;
 using Services.Services;
-using System;
-
-
+using Microsoft.AspNetCore.Authentication.JwtBearer; // שורה חדשה
+using Microsoft.IdentityModel.Tokens; // שורה חדשה
+using System.Text; // שורה חדשה
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<Database>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add services to the container.
+// --- התחלה: הוספת אימות JWT ---
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
+// --- סיום: הוספת אימות JWT ---
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -32,10 +42,9 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Register DbContext
 builder.Services.AddScoped<IContext, Database>();
 
-// Register repositories
+// Repositories
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
 builder.Services.AddScoped<ReadingTextsRepository>();
 builder.Services.AddScoped<ReadingQuestionsRepository>();
@@ -45,8 +54,9 @@ builder.Services.AddScoped<LevelTestQuestionsRepository>();
 builder.Services.AddScoped<LevelTestResultsRepository>();
 builder.Services.AddScoped<PracticeResultsRepository>();
 builder.Services.AddScoped<CurrentUserLevelRepository>();
+builder.Services.AddScoped<UserRepository>();
 
-// Register services
+// Services
 builder.Services.AddScoped<ILevelTestService, LevelTestService>();
 builder.Services.AddScoped<ICurrentUserLevelService, CurrentUserLevelService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -54,11 +64,11 @@ builder.Services.AddScoped<IReadingService, ReadingService>();
 builder.Services.AddScoped<IGrammarQuestions, GrammarQuestionsService>();
 builder.Services.AddScoped<IVocabularyQuestions, VocabularyQuestionsService>();
 
+// רישום שירות הטוקנים החדש שיצרת בשלב הקודם
+builder.Services.AddScoped<ITokenService, TokenService>(); // שורה חדשה
+
 var app = builder.Build();
 
-
-
-// Configure the HTTP request pipeline. 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -66,11 +76,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
-
 app.UseHttpsRedirection();
 
+// --- חשוב מאוד: UseAuthentication חייב לבוא לפני UseAuthorization ---
+app.UseAuthentication(); // שורה חדשה
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();
