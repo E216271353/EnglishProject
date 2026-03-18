@@ -64,9 +64,13 @@ const VocabularyGame = () => {
         console.log('Final level to update:', newLevel);
         
         updateByLastAndUpdateLevel(parseInt(userId), 'vocabulary', newLevel)
-          .then(() => {
-            console.log('Backend update successful, updating context with level:', newLevel);
-            updateVocabularyLevel(newLevel);
+          .then(async () => {
+            // Fetch the actual user level from database to ensure sync
+            const updatedUserLevel = await getUserLevel(parseInt(userId));
+            if (updatedUserLevel) {
+              console.log('Fetched actual level from database:', updatedUserLevel.vocabularyLevel);
+              updateVocabularyLevel(updatedUserLevel.vocabularyLevel);
+            }
           })
           .catch(err => console.error('Failed to update user level:', err));
       }

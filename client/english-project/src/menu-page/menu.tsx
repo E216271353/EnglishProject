@@ -16,32 +16,6 @@ const Menu = () => {
   const [showVocabularyGame, setShowVocabularyGame] = useState(false);
   const [showReadingGame, setShowReadingGame] = useState(false);
 
-  // Calculate global level from individual levels
-  const calculateGlobalLevel = () => {
-    const levelMap: { [key: string]: number } = {
-      'Beginner': 1,
-      'Intermediate': 2,
-      'Advanced': 3
-    };
-
-    const grammarScore = levelMap[userLevels.grammarLevel] || 1;
-    const vocabScore = levelMap[userLevels.vocabularyLevel] || 1;
-    const readingScore = levelMap[userLevels.readingLevel] || 1;
-
-    const averageScore = (grammarScore + vocabScore + readingScore) / 3;
-    
-    if (averageScore >= 2.5) return 'Advanced';
-    if (averageScore >= 1.5) return 'Intermediate';
-    return 'Beginner';
-  };
-
-  const getLevelPercentage = () => {
-    const level = calculateGlobalLevel();
-    if (level === 'Advanced') return 100;
-    if (level === 'Intermediate') return 66;
-    return 33;
-  };
-
   useEffect(() => {
     // Get user data from session storage
     const storedUsername = sessionStorage.getItem('username');
@@ -150,11 +124,10 @@ const handleLogout = () => {
             <span className="username">{username || 'Student'}</span>
             <button onClick={handleLogout}>Logout</button>
           </div>
-          <div className="user-level">
-            <span className="level-label">:רמה</span>
-            <div className="level-badge global-level">
-              <div className="level-fill" style={{ width: `${getLevelPercentage()}%` }}></div>
-              <span className="level-text">{calculateGlobalLevel()}</span>
+          <div className="user-stats">
+            <div className="stat-item">
+              <span className="stat-icon">🎯</span>
+              <span className="stat-label">Keep Learning!</span>
             </div>
           </div>
         </div>

@@ -56,12 +56,23 @@ const ProgressPage = () => {
     return colorMap[level] || '#f093fb';
   };
 
+  // Convert UTC date to local time
+  const convertToLocalTime = (utcDate: string | Date): Date => {
+    const date = new Date(utcDate);
+    // If the date string doesn't include timezone info, treat it as UTC
+    if (typeof utcDate === 'string' && !utcDate.includes('Z') && !utcDate.includes('+')) {
+      // Parse as UTC and convert to local
+      return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+    }
+    return date;
+  };
+
   const getActiveDaysInMonth = () => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
     
     return historyData
-      .map(item => new Date(item.dateUpdated))
+      .map(item => convertToLocalTime(item.dateUpdated))
       .filter(date => date.getFullYear() === year && date.getMonth() === month)
       .map(date => date.getDate());
   };
@@ -145,9 +156,11 @@ const ProgressPage = () => {
         {recentHistory.map((entry, index) => (
           <div key={index} className="history-entry">
             <div className="history-date">
-              {new Date(entry.dateUpdated).toLocaleDateString('he-IL', {
+              {convertToLocalTime(entry.dateUpdated).toLocaleDateString('he-IL', {
                 day: 'numeric',
-                month: 'short'
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit'
               })}
             </div>
             <div className="history-levels">
@@ -180,7 +193,7 @@ const ProgressPage = () => {
 
   const latestLevels = getLatestLevels();
   const totalDaysActive = new Set(
-    historyData.map(item => new Date(item.dateUpdated).toDateString())
+    historyData.map(item => convertToLocalTime(item.dateUpdated).toDateString())
   ).size;
 
   return (

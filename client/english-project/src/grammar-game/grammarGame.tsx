@@ -38,8 +38,12 @@ const GrammarGame = () => {
       if (userId) {
         const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
         updateByLastAndUpdateLevel(parseInt(userId), 'grammar', newLevel)
-          .then(() => {
-            updateGrammarLevel(newLevel);
+          .then(async () => {
+            // Fetch the actual user level from database to ensure sync
+            const updatedUserLevel = await getUserLevel(parseInt(userId));
+            if (updatedUserLevel) {
+              updateGrammarLevel(updatedUserLevel.grammarLevel);
+            }
           })
           .catch(err => console.error('Failed to update user level:', err));
       }

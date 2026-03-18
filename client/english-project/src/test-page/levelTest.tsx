@@ -153,17 +153,6 @@ const LevelTest = () => {
     }
   };
 
-  const handleRetakeTest = () => {
-    setCurrentQuestionIndex(0);
-    setUserAnswers([]);
-    setSelectedAnswer('');
-    setIsCompleted(false);
-    setTestResult(null);
-    setShowFeedback(false);
-    setScores(initialScores);
-    loadQuestions();
-  };
-
   if (isLoading) {
     return (
       <div className={`level-test-container ${isDarkMode ? 'dark' : 'light'}`}>
@@ -268,9 +257,6 @@ const LevelTest = () => {
             )}
           </div>
 
-          <button className="action-btn" onClick={handleRetakeTest}>
-            🔄 Try Again
-          </button>
           <button className="action-btn" onClick={() => navigate('/menu')} style={{ marginTop: '10px', background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)' }}>
             ➡️ Continue to Menu
           </button>

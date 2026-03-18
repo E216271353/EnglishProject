@@ -176,53 +176,50 @@ body,
   font-weight: 600;
 }
 
-.level-badge {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: white;
-  padding: 8px 20px;
-  border-radius: 20px;
-  font-weight: 700;
-  font-size: 1rem;
-  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+.user-stats {
+  display: flex;
+  gap: 20px;
+  align-items: center;
   direction: rtl;
 }
 
-.level-badge.global-level {
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 12px 30px;
-  font-size: 1.25rem;
-  font-weight: 900;
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  animation: pulseLevel 2s ease-in-out infinite;
-  position: relative;
-  overflow: hidden;
+  padding: 12px 24px;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
-.level-badge.global-level .level-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 20px;
+.stat-icon {
+  font-size: 1.5rem;
+  animation: bounce 2s ease-in-out infinite;
 }
 
-.level-badge.global-level .level-text {
-  position: relative;
-  z-index: 1;
+.stat-label {
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-@keyframes pulseLevel {
+@keyframes float {
   0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    transform: translateY(0px);
   }
   50% {
-    transform: scale(1.05);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
   }
 }
 

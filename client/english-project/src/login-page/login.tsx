@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
 import { login, signUp } from '../services/user.service';
-import type { User, UserLogin } from '../types/user';
+import type { User, UserLogin, UserSignUp } from '../types/user';
 import { useUserLevel } from '../context/UserLevelContext';
 import { getUserLevel } from '../services/currentUserLevel.service';
 
@@ -32,8 +32,10 @@ const Login = () => {
 
     if (!formData.password) {
       newErrors.password = 'חובה להזין סיסמה';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'הסיסמה חייבת להכיל לפחות 6 תווים';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'הסיסמה חייבת להכיל לפחות 8 תווים';
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      newErrors.password = 'הסיסמה חייבת לכלול אות גדולה, אות קטנה ומספר';
     }
 
     if (!isLogin) {
@@ -167,15 +169,6 @@ const Login = () => {
             </div>
           )}
 
-          {isLogin && (
-            <div className="form-options">
-              <label className="remember-me">
-                <input type="checkbox" />
-                <span>Remember me</span>
-              </label>
-              <a href="#" className="forgot-password">Forgot password?</a>
-            </div>
-          )}
 
           <button
             type="submit"
@@ -220,11 +213,12 @@ try {
       navigate('/menu');
     }
   } else {
-    const response: any = await signUp({ 
-  username: formData.fullName, 
-  email: formData.email, 
-  password: formData.password 
-} as any);
+    const userSignUp: UserSignUp = { 
+      username: formData.fullName, 
+      email: formData.email, 
+      password: formData.password 
+    };
+    const response: any = await signUp(userSignUp);
     const token = response.token || response.Token;
     const userData = response.user || response.User;
 
@@ -237,9 +231,34 @@ try {
   }
 } catch (error: any) {
   console.error("פרטי השגיאה:", error);
-  // אם יש שגיאה ספציפית מהשרת, נציג אותה
-  const errorMessage = error.response?.data || "חלה שגיאה בהתחברות";
-  setErrors({ server: typeof errorMessage === 'string' ? errorMessage : "נתונים לא תקינים" });
+  
+  // Handle different types of errors in Hebrew
+  let errorMessage = '';
+  
+  if (error.response) {
+    // Server responded with error status
+    const serverError = error.response.data;
+    
+    if (typeof serverError === 'string') {
+      errorMessage = serverError;
+    } else if (serverError?.message) {
+      errorMessage = serverError.message;
+    } else if (error.response.status === 401) {
+      errorMessage = isLogin ? 'אימייל או סיסמה שגויים' : 'יצירת החשבון נכשלה';
+    } else if (error.response.status === 400) {
+      errorMessage = isLogin ? 'פרטי התחברות שגויים' : 'נתוני הרשמה לא תקינים';
+    } else {
+      errorMessage = 'אירעה שגיאה. אנא נסה שנית.';
+    }
+  } else if (error.request) {
+    // Request made but no response
+    errorMessage = 'לא ניתן להתחבר לשרת. אנא בדוק את החיבור שלך.';
+  } else {
+    // Something else happened
+    errorMessage = 'אירעה שגיאה בלתי צפויה.';
+  }
+  
+  setErrors({ server: errorMessage });
 }
             }}
           >

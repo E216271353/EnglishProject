@@ -19,6 +19,7 @@ const ReadingGame = () => {
     const [showCompletion, setShowCompletion] = useState(false);
     const [answeredCount, setAnsweredCount] = useState(0);
     const hasLoadedRef = useRef(false);
+    const hasUpdatedLevelRef = useRef(false);
     const { updateReadingLevel } = useUserLevel();
 
     const levels = ['Beginner', 'Intermediate', 'Advanced'];
@@ -32,7 +33,8 @@ const ReadingGame = () => {
 
     // Update level when game is completed
     useEffect(() => {
-        if (showCompletion && texts.length > 0 && answeredCount > 0) {
+        if (showCompletion && texts.length > 0 && answeredCount > 0 && !hasUpdatedLevelRef.current) {
+            hasUpdatedLevelRef.current = true;
             const percentage = Math.round((score / answeredCount) * 100);
             const userId = sessionStorage.getItem('userId');
             const currentLevel = texts[texts.length - 1]?.level || 'Beginner';
@@ -42,13 +44,17 @@ const ReadingGame = () => {
             if (userId) {
                 const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
                 updateByLastAndUpdateLevel(parseInt(userId), 'reading', newLevel)
-                    .then(() => {
-                        updateReadingLevel(newLevel);
+                    .then(async () => {
+                        // Fetch the actual user level from database to ensure sync
+                        const updatedUserLevel = await getUserLevel(parseInt(userId));
+                        if (updatedUserLevel) {
+                            updateReadingLevel(updatedUserLevel.readingLevel);
+                        }
                     })
                     .catch(err => console.error('Failed to update user level:', err));
             }
         }
-    }, [showCompletion, texts, score, answeredCount, levels, updateReadingLevel]);
+    }, [showCompletion]);
 
     const loadContent = async () => {
         setLoading(true);
