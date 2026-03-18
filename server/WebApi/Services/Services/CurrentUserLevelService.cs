@@ -1,5 +1,6 @@
 ﻿using Services.Interface;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Repository.Entities;
 using Repository.Repositories;
@@ -28,9 +29,13 @@ namespace Services.Services
             await _repository.AddItem(currentUserLevel);
         }
 
-        public async Task<CurrentUserLevel> GetCurrentUserLevelByUserId(int UserId)
+        public async Task<CurrentUserLevel> GetCurrentUserLevelByUserId(int userId)
         {
-            return await _repository.GetByUserId(UserId);
+            var allRows = await _repository.GetAllAsync();
+            return allRows
+                .Where(x => x.UserId == userId)
+                .OrderByDescending(x => x.DateUpdated)
+                .FirstOrDefault();
         }
 
         public async Task<string?> UpdateLevel(int userId, string currentLevel)

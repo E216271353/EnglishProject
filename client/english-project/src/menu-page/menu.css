@@ -187,6 +187,45 @@ body,
   direction: rtl;
 }
 
+.level-badge.global-level {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 12px 30px;
+  font-size: 1.25rem;
+  font-weight: 900;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  animation: pulseLevel 2s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.level-badge.global-level .level-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 20px;
+}
+
+.level-badge.global-level .level-text {
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes pulseLevel {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+  }
+}
+
 /* Main Content Area */
 .main-content {
   display: flex;

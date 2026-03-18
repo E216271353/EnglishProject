@@ -3,6 +3,7 @@ import Login from './login-page/login';
 import LevelTest from './test-page/levelTest';
 import Menu from './menu-page/menu';
 import ReadingGame from './reading-game/readingGame';
+import ProgressPage from './progress-page/progressPage';
 import type { JSX } from 'react';
 
 // קומפוננטה פנימית שבודקת הרשאות
@@ -48,6 +49,15 @@ const AppRouter = () => (
         element={
           <PrivateRoute>
             <ReadingGame />
+          </PrivateRoute>
+        } 
+      />
+      
+      <Route 
+        path="/progress" 
+        element={
+          <PrivateRoute>
+            <ProgressPage />
           </PrivateRoute>
         } 
       />

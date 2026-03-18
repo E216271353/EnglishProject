@@ -47,4 +47,12 @@ export const getUserLevel = async (userId: number): Promise<CurrentUserLevel | n
         }
     }
 
-  
+export const getAllUserLevelsByUserId = async (userId: number): Promise<CurrentUserLevel[]> => {
+    try {
+        const response = await api.get<CurrentUserLevel[]>(`/CurrentUserLevel/userprogress/${userId}`);
+        return response.data;
+    } catch (error: any) {
+        console.error('Error fetching user level history:', error);
+        return [];
+    }
+}
