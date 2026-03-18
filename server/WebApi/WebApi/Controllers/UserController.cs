@@ -29,8 +29,7 @@ namespace WebApi.Controllers
             // מחזירים אובייקט "על המקום" בלי להגדיר לו מחלקה
             return Ok(new
             {
-                id = foundUser.Id,
-                username = foundUser.Username,
+                user=foundUser,
                 token = token // הנה הטוקן מצטרף לחגיגה
             });
         }

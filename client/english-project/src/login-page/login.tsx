@@ -3,9 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import './login.css';
 import { login, signUp } from '../services/user.service';
 import type { User, UserLogin } from '../types/user';
+import { useUserLevel } from '../context/UserLevelContext';
+import { getUserLevel } from '../services/currentUserLevel.service';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setUserLevels } = useUserLevel();
   const [isLogin, setIsLogin] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({}); // State חדש לשגיאות
@@ -199,6 +202,21 @@ try {
       sessionStorage.setItem('token', token);
       sessionStorage.setItem('userId', userData.id.toString());
       sessionStorage.setItem('username', userData.username);
+      
+      // Fetch and set user levels immediately after login
+      try {
+        const levels = await getUserLevel(userData.id);
+        if (levels) {
+          setUserLevels({
+            grammarLevel: levels.grammarLevel,
+            vocabularyLevel: levels.vocabularyLevel,
+            readingLevel: levels.readingLevel
+          });
+        }
+      } catch (err) {
+        console.warn('Could not fetch user levels during login:', err);
+      }
+      
       navigate('/menu');
     }
   } else {

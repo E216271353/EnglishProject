@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useUserLevel } from '../context/UserLevelContext';
 import { grammarQuestionsService } from '../services/grammarQuestions.service';
-import { getCurrentUserLevelByUserId, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
+import { getUserLevel, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
 import type { GrammarQuestion } from '../types/grammarQuestion';
 import './grammarGame.css';
 
@@ -39,7 +39,6 @@ const GrammarGame = () => {
         const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
         updateByLastAndUpdateLevel(parseInt(userId), 'grammar', newLevel)
           .then(() => {
-            // Update context
             updateGrammarLevel(newLevel);
           })
           .catch(err => console.error('Failed to update user level:', err));
@@ -63,7 +62,7 @@ const GrammarGame = () => {
       // Get user's current level with error handling
       let userLevel = 'Beginner';
       try {
-        const userLevelData = await getCurrentUserLevelByUserId(parseInt(userId));
+        const userLevelData = await getUserLevel(parseInt(userId));
         userLevel = userLevelData?.grammarLevel || 'Beginner';
       } catch (levelError) {
         console.warn('Could not fetch user level, defaulting to Beginner:', levelError);

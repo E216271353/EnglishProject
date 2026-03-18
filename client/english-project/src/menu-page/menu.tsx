@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserLevel } from '../context/UserLevelContext';
-import { getCurrentUserLevelByUserId } from '../services/currentUserLevel.service';
+import { getUserLevel } from '../services/currentUserLevel.service';
 import GrammarGame from '../grammar-game/grammarGame';
 import VocabularyGame from '../vocabulary-game/vocabularyGame';
 import ReadingGame from '../reading-game/readingGame';
@@ -25,21 +25,23 @@ const Menu = () => {
       setUsername(storedUsername);
     }
     
-    // Fetch user levels from API
-    if (userId) {
-      getCurrentUserLevelByUserId(parseInt(userId))
+    // Fetch user levels from API only if not already loaded
+    if (userId && !userLevels.grammarLevel) {
+      getUserLevel(parseInt(userId))
         .then(levels => {
-          setUserLevels({
-            grammarLevel: levels.grammarLevel,
-            vocabularyLevel: levels.vocabularyLevel,
-            readingLevel: levels.readingLevel
-          });
+          if (levels) {
+            setUserLevels({
+              grammarLevel: levels.grammarLevel,
+              vocabularyLevel: levels.vocabularyLevel,
+              readingLevel: levels.readingLevel
+            });
+          }
         })
         .catch(err => {
           console.warn('Could not fetch user levels:', err);
         });
     }
-  }, [setUserLevels]);
+  }, []);
 
   const menuItems = [
     {

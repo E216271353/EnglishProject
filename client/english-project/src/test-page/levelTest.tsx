@@ -4,7 +4,7 @@ import './levelTest.css';
 import { getLevelTestQuestions, submitLevelTest } from '../services/levelTest.service';
 import type { LevelTestQuestion, UserAnswer, LevelTestResult } from '../types/levelTest';
 import { calculateLevel, type CurrentUserLevel } from '../types/currentUserLevel';
-import { addUserLevel } from '../services/currentUserLevel.service';
+import { addCurrentUserLevel } from '../services/currentUserLevel.service';
 
 const LevelTest = () => {
   const navigate = useNavigate();
@@ -143,7 +143,7 @@ const LevelTest = () => {
 
     try {
       await submitLevelTest(result);
-      await addUserLevel(userLevel);
+      await addCurrentUserLevel(userLevel);
 
       
       setTestResult(result);

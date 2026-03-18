@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useUserLevel } from '../context/UserLevelContext';
 import { vocabularyQuestionsService } from '../services/VocabularyQuestions.service';
-import { getCurrentUserLevelByUserId, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
+import { getUserLevel, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
 import type { VocabularyQuestions } from '../types/vocabularyQuestions';
 import './vocabularyGame.css';
 
@@ -54,7 +54,6 @@ const VocabularyGame = () => {
         const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
         updateByLastAndUpdateLevel(parseInt(userId), 'vocabulary', newLevel)
           .then(() => {
-            // Update context
             updateVocabularyLevel(newLevel);
           })
           .catch(err => console.error('Failed to update user level:', err));
@@ -79,7 +78,7 @@ const VocabularyGame = () => {
       // Get user's current level with error handling
       let userLevel = 'Beginner';
       try {
-        const userLevelData = await getCurrentUserLevelByUserId(parseInt(userId));
+        const userLevelData = await getUserLevel(parseInt(userId));
         userLevel = userLevelData?.vocabularyLevel || 'Beginner';
       } catch (levelError) {
         console.warn('Could not fetch user level, defaulting to Beginner:', levelError);

@@ -3,7 +3,7 @@ import { useUserLevel } from '../context/UserLevelContext';
 import './readingGame.css';
 import { getQuestionsByTextId, getReadingTextByLevel } from '../services/readingQuestions.service';
 import type { ReadingQuestion,ReadingText } from '../types/readingQuestions';
-import { getCurrentUserLevelByUserId, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
+import { getUserLevel, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
 
 
 const ReadingGame = () => {
@@ -43,7 +43,6 @@ const ReadingGame = () => {
                 const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
                 updateByLastAndUpdateLevel(parseInt(userId), 'reading', newLevel)
                     .then(() => {
-                        // Update context
                         updateReadingLevel(newLevel);
                     })
                     .catch(err => console.error('Failed to update user level:', err));
@@ -66,7 +65,7 @@ const ReadingGame = () => {
             // Get user's current level with error handling
             let userLevel = 'Beginner';
             try {
-                const userLevelData = await getCurrentUserLevelByUserId(parseInt(userId));
+                const userLevelData = await getUserLevel(parseInt(userId));
                 userLevel = userLevelData?.readingLevel || 'Beginner';
             } catch (levelError) {
                 console.warn('Could not fetch user level, defaulting to Beginner:', levelError);
