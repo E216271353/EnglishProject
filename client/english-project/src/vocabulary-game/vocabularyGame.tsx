@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { useUserLevel } from '../context/UserLevelContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateVocabularyLevel } from '../store/userLevelSlice';
+import type { RootState, AppDispatch } from '../store/store';
 import { vocabularyQuestionsService } from '../services/VocabularyQuestions.service';
-import { getUserLevel, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
+import { updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
 import type { VocabularyQuestions } from '../types/vocabularyQuestions';
 import './vocabularyGame.css';
 
@@ -31,7 +33,8 @@ const VocabularyGame = () => {
   const [completedQuestions, setCompletedQuestions] = useState(0);
   const [answerOptions, setAnswerOptions] = useState<string[]>([]);
   const hasLoadedRef = useRef(false);
-  const { updateVocabularyLevel } = useUserLevel();
+  const dispatch = useDispatch<AppDispatch>();
+  const vocabularyLevel = useSelector((state: RootState) => state.userLevel.vocabularyLevel);
 
   useEffect(() => {
     if (!hasLoadedRef.current) {
@@ -64,18 +67,11 @@ const VocabularyGame = () => {
         console.log('Final level to update:', newLevel);
         
         updateByLastAndUpdateLevel(parseInt(userId), 'vocabulary', newLevel)
-          .then(async () => {
-            // Fetch the actual user level from database to ensure sync
-            const updatedUserLevel = await getUserLevel(parseInt(userId));
-            if (updatedUserLevel) {
-              console.log('Fetched actual level from database:', updatedUserLevel.vocabularyLevel);
-              updateVocabularyLevel(updatedUserLevel.vocabularyLevel);
-            }
-          })
+          .then(() => dispatch(updateVocabularyLevel(newLevel)))
           .catch(err => console.error('Failed to update user level:', err));
       }
     }
-  }, [completedQuestions, showResult, questions, score, updateVocabularyLevel]);
+  }, [completedQuestions, showResult, questions, score]);
 
   const loadQuestions = async () => {
     console.log('loadQuestions called, current questions count:', questions.length);
@@ -91,19 +87,8 @@ const VocabularyGame = () => {
         return;
       }
 
-      // Get user's current level with error handling
-      let userLevel = 'Beginner';
-      try {
-        const userLevelData = await getUserLevel(parseInt(userId));
-        userLevel = userLevelData?.vocabularyLevel || 'Beginner';
-      } catch (levelError) {
-        console.warn('Could not fetch user level, defaulting to Beginner:', levelError);
-        // Continue with default level
-      }
-
-      // Fetch questions for user's current level (backend handles returning all appropriate questions)
-      const allQuestions = await vocabularyQuestionsService.getQuestionsByLevel(userLevel);
-      console.log(`Fetched ${allQuestions.length} questions for level ${userLevel}`);
+      const allQuestions = await vocabularyQuestionsService.getQuestionsByLevel(vocabularyLevel || 'Beginner');
+      console.log(`Fetched ${allQuestions.length} questions for level ${vocabularyLevel}`);
 
       setQuestions(allQuestions);
       console.log(`Questions set to state: ${allQuestions.length}`);

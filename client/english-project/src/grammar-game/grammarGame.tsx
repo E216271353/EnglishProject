@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { useUserLevel } from '../context/UserLevelContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateGrammarLevel } from '../store/userLevelSlice';
+import type { RootState, AppDispatch } from '../store/store';
 import { grammarQuestionsService } from '../services/grammarQuestions.service';
-import { getUserLevel, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
+import { updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
 import type { GrammarQuestion } from '../types/grammarQuestion';
 import './grammarGame.css';
 
@@ -17,7 +19,8 @@ const GrammarGame = () => {
   const [error, setError] = useState('');
   const [completedQuestions, setCompletedQuestions] = useState(0);
   const hasLoadedRef = useRef(false);
-  const { updateGrammarLevel } = useUserLevel();
+  const dispatch = useDispatch<AppDispatch>();
+  const grammarLevel = useSelector((state: RootState) => state.userLevel.grammarLevel);
 
   useEffect(() => {
     if (!hasLoadedRef.current) {
@@ -38,17 +41,11 @@ const GrammarGame = () => {
       if (userId) {
         const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
         updateByLastAndUpdateLevel(parseInt(userId), 'grammar', newLevel)
-          .then(async () => {
-            // Fetch the actual user level from database to ensure sync
-            const updatedUserLevel = await getUserLevel(parseInt(userId));
-            if (updatedUserLevel) {
-              updateGrammarLevel(updatedUserLevel.grammarLevel);
-            }
-          })
+          .then(() => dispatch(updateGrammarLevel(newLevel)))
           .catch(err => console.error('Failed to update user level:', err));
       }
     }
-  }, [completedQuestions, showResult, questions, score, updateGrammarLevel]);
+  }, [completedQuestions, showResult, questions, score]);
 
   const loadQuestions = async () => {
     try {
@@ -63,18 +60,7 @@ const GrammarGame = () => {
         return;
       }
 
-      // Get user's current level with error handling
-      let userLevel = 'Beginner';
-      try {
-        const userLevelData = await getUserLevel(parseInt(userId));
-        userLevel = userLevelData?.grammarLevel || 'Beginner';
-      } catch (levelError) {
-        console.warn('Could not fetch user level, defaulting to Beginner:', levelError);
-        // Continue with default level
-      }
-
-      // Fetch questions for user's current level (backend handles returning all appropriate questions)
-      const allQuestions = await grammarQuestionsService.getQuestionsByLevel(userLevel);
+      const allQuestions = await grammarQuestionsService.getQuestionsByLevel(grammarLevel || 'Beginner');
 
       setQuestions(allQuestions);
       setLoading(false);

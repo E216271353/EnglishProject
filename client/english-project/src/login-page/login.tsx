@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import './login.css';
 import { login, signUp } from '../services/user.service';
 import type { User, UserLogin, UserSignUp } from '../types/user';
-import { useUserLevel } from '../context/UserLevelContext';
+import { useAppDispatch } from '../store/hooks';
+import { setUserLevels } from '../store/userLevelSlice';
 import { getUserLevel } from '../services/currentUserLevel.service';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setUserLevels } = useUserLevel();
+  const dispatch = useAppDispatch();
   const [isLogin, setIsLogin] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({}); // State חדש לשגיאות
@@ -200,11 +201,12 @@ try {
       try {
         const levels = await getUserLevel(userData.id);
         if (levels) {
-          setUserLevels({
-            grammarLevel: levels.grammarLevel,
-            vocabularyLevel: levels.vocabularyLevel,
-            readingLevel: levels.readingLevel
-          });
+          const r = levels as Record<string, unknown>;
+          dispatch(setUserLevels({
+            grammarLevel:    (r['grammarLevel']    ?? r['GrammarLevel'])    as string | undefined,
+            vocabularyLevel: (r['vocabularyLevel'] ?? r['VocabularyLevel']) as string | undefined,
+            readingLevel:    (r['readingLevel']    ?? r['ReadingLevel'])    as string | undefined,
+          }));
         }
       } catch (err) {
         console.warn('Could not fetch user levels during login:', err);

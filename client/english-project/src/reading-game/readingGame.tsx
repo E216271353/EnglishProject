@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { useUserLevel } from '../context/UserLevelContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateReadingLevel } from '../store/userLevelSlice';
+import type { RootState, AppDispatch } from '../store/store';
 import './readingGame.css';
 import { getQuestionsByTextId, getReadingTextByLevel } from '../services/readingQuestions.service';
 import type { ReadingQuestion,ReadingText } from '../types/readingQuestions';
-import { getUserLevel, updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
+import { updateByLastAndUpdateLevel } from '../services/currentUserLevel.service';
 
 
 const ReadingGame = () => {
@@ -20,7 +22,8 @@ const ReadingGame = () => {
     const [answeredCount, setAnsweredCount] = useState(0);
     const hasLoadedRef = useRef(false);
     const hasUpdatedLevelRef = useRef(false);
-    const { updateReadingLevel } = useUserLevel();
+    const dispatch = useDispatch<AppDispatch>();
+    const readingLevel = useSelector((state: RootState) => state.userLevel.readingLevel);
 
     const levels = ['Beginner', 'Intermediate', 'Advanced'];
 
@@ -44,13 +47,7 @@ const ReadingGame = () => {
             if (userId) {
                 const newLevel = percentage === 100 && nextLevel ? nextLevel : currentLevel;
                 updateByLastAndUpdateLevel(parseInt(userId), 'reading', newLevel)
-                    .then(async () => {
-                        // Fetch the actual user level from database to ensure sync
-                        const updatedUserLevel = await getUserLevel(parseInt(userId));
-                        if (updatedUserLevel) {
-                            updateReadingLevel(updatedUserLevel.readingLevel);
-                        }
-                    })
+                    .then(() => dispatch(updateReadingLevel(newLevel)))
                     .catch(err => console.error('Failed to update user level:', err));
             }
         }
@@ -68,18 +65,7 @@ const ReadingGame = () => {
                 return;
             }
 
-            // Get user's current level with error handling
-            let userLevel = 'Beginner';
-            try {
-                const userLevelData = await getUserLevel(parseInt(userId));
-                userLevel = userLevelData?.readingLevel || 'Beginner';
-            } catch (levelError) {
-                console.warn('Could not fetch user level, defaulting to Beginner:', levelError);
-                // Continue with default level
-            }
-
-            // Fetch texts for user's current level (backend handles returning all appropriate texts)
-            const allTexts: ReadingText[] = await getReadingTextByLevel(userLevel);
+            const allTexts: ReadingText[] = await getReadingTextByLevel(readingLevel || 'Beginner');
 
             // Now fetch questions for all the texts we loaded
             let allQuestions: ReadingQuestion[] = [];

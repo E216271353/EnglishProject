@@ -1,15 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUserLevel } from '../context/UserLevelContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserLevels } from '../store/userLevelSlice';
+import type { RootState, AppDispatch } from '../store/store';
 import { getUserLevel } from '../services/currentUserLevel.service';
 import GrammarGame from '../grammar-game/grammarGame';
 import VocabularyGame from '../vocabulary-game/vocabularyGame';
 import ReadingGame from '../reading-game/readingGame';
 import './menu.css';
 
+const levelConfig: Record<string, { gradient: string; icon: string; glow: string }> = {
+  Beginner:     { gradient: 'linear-gradient(135deg, #11998e, #38ef7d)', icon: '🌱', glow: 'rgba(56,239,125,0.45)' },
+  Intermediate: { gradient: 'linear-gradient(135deg, #f7971e, #ffd200)', icon: '⭐', glow: 'rgba(255,210,0,0.45)'  },
+  Advanced:     { gradient: 'linear-gradient(135deg, #8E2DE2, #4A00E0)', icon: '👑', glow: 'rgba(142,45,226,0.45)' },
+};
+
 const Menu = () => {
   const navigate = useNavigate();
-  const { userLevels, setUserLevels } = useUserLevel();
+  const dispatch = useDispatch<AppDispatch>();
+  const grammarLevel    = useSelector((state: RootState) => state.userLevel.grammarLevel);
+  const vocabularyLevel = useSelector((state: RootState) => state.userLevel.vocabularyLevel);
+  const readingLevel    = useSelector((state: RootState) => state.userLevel.readingLevel);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [username, setUsername] = useState('');
   const [showGrammarGame, setShowGrammarGame] = useState(false);
@@ -17,29 +28,25 @@ const Menu = () => {
   const [showReadingGame, setShowReadingGame] = useState(false);
 
   useEffect(() => {
-    // Get user data from session storage
     const storedUsername = sessionStorage.getItem('username');
     const userId = sessionStorage.getItem('userId');
-    
-    if (storedUsername) {
-      setUsername(storedUsername);
-    }
-    
-    // Fetch user levels from API only if not already loaded
-    if (userId && !userLevels.grammarLevel) {
+
+    if (storedUsername) setUsername(storedUsername);
+
+    if (userId) {
       getUserLevel(parseInt(userId))
-        .then(levels => {
-          if (levels) {
-            setUserLevels({
-              grammarLevel: levels.grammarLevel,
-              vocabularyLevel: levels.vocabularyLevel,
-              readingLevel: levels.readingLevel
-            });
+        .then(raw => {
+          if (!raw) return;
+          // Guard against backend property-name mismatches (PascalCase vs camelCase)
+          const r = raw as Record<string, unknown>;
+          const grammar    = (r['grammarLevel']    ?? r['GrammarLevel'])    as string | undefined;
+          const vocabulary = (r['vocabularyLevel'] ?? r['VocabularyLevel']) as string | undefined;
+          const reading    = (r['readingLevel']    ?? r['ReadingLevel'])    as string | undefined;
+          if (grammar && vocabulary && reading) {
+            dispatch(setUserLevels({ grammarLevel: grammar, vocabularyLevel: vocabulary, readingLevel: reading }));
           }
         })
-        .catch(err => {
-          console.warn('Could not fetch user levels:', err);
-        });
+        .catch(err => console.warn('Could not fetch user levels:', err));
     }
   }, []);
 
@@ -119,16 +126,41 @@ const handleLogout = () => {
       {/* Top Bar with User Info */}
       <div className="top-bar">
         <div className="user-info">
-          <div className="greeting">
-            <span className="hello-text">!שלום</span>
-            <span className="username">{username || 'Student'}</span>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-          <div className="user-stats">
-            <div className="stat-item">
+          {/* Row 1: greeting + keep-learning + logout */}
+          <div className="top-bar-row">
+            <div className="greeting">
+              <span className="hello-text">!שלום</span>
+              <span className="username">{username || 'Student'}</span>
+            </div>
+            <div className="top-bar-center">
               <span className="stat-icon">🎯</span>
               <span className="stat-label">Keep Learning!</span>
             </div>
+            <button className="logout-btn" onClick={handleLogout}>Logout</button>
+          </div>
+
+          {/* Row 2: level badges */}
+          <div className="level-badges">
+            {[
+              { label: 'דקדוק',       key: 'grammar',    value: grammarLevel    || 'Beginner' },
+              { label: 'אוצר מילים',  key: 'vocabulary', value: vocabularyLevel || 'Beginner' },
+              { label: 'קריאה',       key: 'reading',    value: readingLevel    || 'Beginner' },
+            ].map(({ label, key, value }) => {
+              const cfg = levelConfig[value] ?? { gradient: 'linear-gradient(135deg,#718096,#a0aec0)', icon: '📘', glow: 'rgba(113,128,150,0.35)' };
+              return (
+                <div
+                  key={key}
+                  className="level-badge"
+                  style={{ background: cfg.gradient, boxShadow: `0 4px 18px ${cfg.glow}` }}
+                >
+                  <span className="level-badge-icon">{cfg.icon}</span>
+                  <div className="level-badge-text">
+                    <span className="level-badge-subject">{label}</span>
+                    <span className="level-badge-value">{value}</span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

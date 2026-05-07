@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Services.Services
 {
-    public class GrammarQuestionsService: IGrammarQuestions
+    public class GrammarQuestionsService : IGrammarQuestions
     {
         private readonly GrammarQuestionsRepository _repository;
 
@@ -20,7 +20,7 @@ namespace Services.Services
         }
         public async Task<IEnumerable<GrammarQuestions>> GetGrammarQuestionsByUserLevel(string level)
         {
-            
+
             var allQuestions = await _repository.GetAllAsync();
 
             var normalizedLevel = level?.ToLower();
@@ -29,10 +29,9 @@ namespace Services.Services
             {
                 "beginner" => allQuestions.Where(q => q.Level?.ToLower() == "beginner"),
 
-                "intermediate" => allQuestions.Where(q => q.Level?.ToLower() == "beginner" ||
-                                                       q.Level?.ToLower() == "intermediate"),
+                "intermediate" => allQuestions.Where(q => q.Level?.ToLower() == "intermediate"),
 
-                "advanced" => allQuestions,
+                "advanced" => allQuestions.Where(q => q.Level?.ToLower() == "advanced"),
                 _ => Enumerable.Empty<GrammarQuestions>()
             };
         }

@@ -29,11 +29,12 @@ namespace Services.Services
             await _repository.AddItem(currentUserLevel);
         }
 
-        public async Task<User> GetCurrentUserLevelByUserId(int userId)
+        public async Task<CurrentUserLevel> GetCurrentUserLevelByUserId(int userId)
         {
-            var allRows = await _userRepository.GetAll();
+            var allRows = await _repository.GetAllAsync();
             return allRows
-                .Where(x => x.Id == userId)
+                .Where(x => x.UserId == userId)
+                .OrderByDescending(x => x.DateUpdated)
                 .FirstOrDefault();
         }
 

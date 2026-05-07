@@ -5,6 +5,7 @@ interface UserLevelState {
   grammarLevel: string;
   vocabularyLevel: string;
   readingLevel: string;
+  levelsLoaded: boolean;
   lastUpdated: number;
 }
 
@@ -12,6 +13,7 @@ const initialState: UserLevelState = {
   grammarLevel: 'Beginner',
   vocabularyLevel: 'Beginner',
   readingLevel: 'Beginner',
+  levelsLoaded: false,
   lastUpdated: Date.now()
 };
 
@@ -20,9 +22,13 @@ const userLevelSlice = createSlice({
   initialState,
   reducers: {
     setUserLevels: (state, action: PayloadAction<Partial<UserLevelState>>) => {
+      const p = action.payload;
       return {
         ...state,
-        ...action.payload,
+        grammarLevel:    p.grammarLevel    || state.grammarLevel,
+        vocabularyLevel: p.vocabularyLevel || state.vocabularyLevel,
+        readingLevel:    p.readingLevel    || state.readingLevel,
+        levelsLoaded: true,
         lastUpdated: Date.now()
       };
     },

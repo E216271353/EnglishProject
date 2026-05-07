@@ -121,7 +121,7 @@ body,
 .top-bar {
   position: relative;
   z-index: 10;
-  padding: 20px 40px;
+  padding: 16px 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -130,15 +130,14 @@ body,
 .user-info {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
-  padding: 15px 30px;
+  padding: 14px 24px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   display: flex;
-  align-items: center;
-  gap: 30px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
   border: 3px solid #ffffff;
-  direction: rtl;
   width: 100%;
-  justify-content: space-between;
 }
 
 .greeting {
@@ -176,6 +175,133 @@ body,
   font-weight: 600;
 }
 
+/* ── Top Bar Row 1 ── */
+.top-bar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 16px;
+}
+
+.top-bar-center {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-label {
+  color: #4a5568;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.logout-btn {
+  padding: 7px 18px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(102, 126, 234, 0.5);
+}
+
+/* ── Top Bar Row 2 – Level Badges ── */
+.level-badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.level-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px 7px 10px;
+  border-radius: 50px;
+  cursor: default;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  flex-shrink: 0;
+  /* shimmer via pseudo — content sits above it via isolation */
+  isolation: isolate;
+  position: relative;
+  overflow: hidden;
+}
+
+/* shimmer sweep — stays below text via isolation */
+.level-badge::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.32) 50%,
+    transparent 60%
+  );
+  transform: translateX(-100%);
+  animation: badgeShimmer 3.2s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes badgeShimmer {
+  0%   { transform: translateX(-100%); }
+  55%  { transform: translateX(200%);  }
+  100% { transform: translateX(200%);  }
+}
+
+.level-badge:hover {
+  transform: translateY(-3px) scale(1.05);
+}
+
+.level-badge-icon {
+  font-size: 1.3rem;
+  position: relative;
+  z-index: 1;
+  line-height: 1;
+}
+
+.level-badge-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  position: relative;
+  z-index: 1;
+}
+
+.level-badge-subject {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.level-badge-value {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.2px;
+}
+
+/* dark mode */
+.menu-container.dark .stat-label { color: #e2e8f0; }
+.menu-container.dark .logout-btn { background: linear-gradient(135deg, #4A00E0, #8E2DE2); }
+
+/* ── legacy stat-item (keep for reference) ── */
 .user-stats {
   display: flex;
   gap: 20px;
